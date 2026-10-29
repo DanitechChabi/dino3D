@@ -26,7 +26,7 @@ export async function GET(request: Request) {
         end: s.endTime ? churchDateTime(d, s.endTime) : null,
         weeklyOn: s.dayOfWeek,
         monthWeeks: s.weeks,
-        alarms: [60],
+        alarms: s.reminders ? [60] : [],
         url: `${origin}/cultes`,
       };
     }),

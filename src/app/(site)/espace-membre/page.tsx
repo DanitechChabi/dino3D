@@ -28,7 +28,7 @@ export default async function MemberPage() {
   const [user, ministries, services, announcements, registrations] = await Promise.all([
     db.user.findUniqueOrThrow({ where: { id: me.id }, include: { ministries: true } }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
-    db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
+    db.service.findMany({ where: { OR: [{ ministryId: null }, { ministry: { members: { some: { userId: me.id } } } }] }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 4 }),
     db.eventRegistration.findMany({
       where: { userId: me.id, event: { startAt: { gte: new Date() } } },

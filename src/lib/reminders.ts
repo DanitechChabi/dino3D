@@ -32,7 +32,7 @@ export async function runReminders(now = new Date()) {
   const horizon = new Date(now.getTime() + 24 * HOUR);
   const [events, services] = await Promise.all([
     db.event.findMany({ where: { published: true, startAt: { gt: now, lte: horizon } } }),
-    db.service.findMany(),
+    db.service.findMany({ where: { reminders: true } }),
   ]);
 
   const items: Item[] = [

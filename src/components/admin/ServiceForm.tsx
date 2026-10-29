@@ -2,12 +2,12 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { saveService } from "@/actions/admin";
-import { FieldError, FormMessage, SubmitButton, kept } from "../forms/ui";
+import { FieldError, FormMessage, SubmitButton, kept, keptCheck } from "../forms/ui";
 import { DAYS } from "@/content/site";
 
-type Service = { id: string; name: string; description: string | null; dayOfWeek: number; weeks: number[]; startTime: string; endTime: string | null; location: string; order: number };
+type Service = { id: string; name: string; description: string | null; dayOfWeek: number; weeks: number[]; ministryId: string | null; reminders: boolean; startTime: string; endTime: string | null; location: string; order: number };
 
-export function ServiceForm({ service }: { service?: Service }) {
+export function ServiceForm({ service, ministries }: { service?: Service; ministries: { id: string; name: string }[] }) {
   const [state, action] = useActionState(saveService, undefined);
   const ref = useRef<HTMLFormElement>(null);
   useEffect(() => {
@@ -52,6 +52,17 @@ export function ServiceForm({ service }: { service?: Service }) {
           ))}
         </div>
       </fieldset>
+      <div className="sm:col-span-3">
+        <label className="label">Ministère (répétitions, réunions de groupe…)</label>
+        <select name="ministryId" className="field" defaultValue={kept(state, "ministryId", service?.ministryId ?? "")}>
+          <option value="">Toute l&apos;église</option>
+          {ministries.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+        </select>
+      </div>
+      <label className="flex items-center gap-2 self-end pb-3 text-sm text-night-800 sm:col-span-3">
+        <input type="checkbox" name="reminders" defaultChecked={keptCheck(state, "reminders", service?.reminders ?? true)} className="size-4 accent-gold-500" />
+        Envoyer les rappels à tous les abonnés
+      </label>
       <div className="sm:col-span-5">
         <label className="label">Description</label>
         <input name="description" className="field" defaultValue={kept(state, "description", service?.description ?? "")} />

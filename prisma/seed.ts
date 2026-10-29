@@ -23,6 +23,10 @@ const services = [
   { name: "Réunion de prière", dayOfWeek: 3, weeks: [], startTime: "18:00", endTime: "19:00", description: "Intercession pour l'église, les familles et la nation.", order: 5 },
   { name: "Réunion de prière", dayOfWeek: 5, weeks: [2, 3, 4, 5], startTime: "19:00", endTime: "20:00", description: "Prière et intercession.", order: 6 },
   { name: "Veillée de prière", dayOfWeek: 5, weeks: [1], startTime: "19:00", endTime: "22:00", description: "Une soirée de prière le premier vendredi du mois.", order: 7 },
+  // Répétitions (pas de rappel général)
+  { name: "Répétition du groupe musical", dayOfWeek: 6, weeks: [], startTime: "14:00", endTime: "16:00", description: "Répétition des musiciens.", order: 8, ministry: "louange", reminders: false },
+  { name: "Répétition de la chorale", dayOfWeek: 6, weeks: [], startTime: "16:00", endTime: "19:00", description: "Répétition des chantres de la chorale.", order: 9, ministry: "louange", reminders: false },
+  { name: "Répétition du groupe musical", dayOfWeek: 0, weeks: [], startTime: "12:00", endTime: "14:00", description: "Répétition des musiciens après le culte.", order: 10, ministry: "louange", reminders: false },
 ];
 
 async function main() {
@@ -46,7 +50,10 @@ async function main() {
   }
 
   if ((await db.service.count()) === 0) {
-    await db.service.createMany({ data: services });
+    const ministryIds = Object.fromEntries((await db.ministry.findMany()).map((m) => [m.slug, m.id]));
+    await db.service.createMany({
+      data: services.map(({ ministry, ...s }: (typeof services)[number] & { ministry?: string }) => ({ ...s, ministryId: ministry ? ministryIds[ministry] : null })),
+    });
   }
 
   if ((await db.announcement.count()) === 0) {

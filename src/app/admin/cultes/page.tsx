@@ -11,13 +11,16 @@ export const metadata: Metadata = { title: "Cultes & horaires" };
 
 export default async function ServicesAdmin() {
   await requireRole("ADMIN");
-  const services = await db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] });
+  const [services, ministries] = await Promise.all([
+    db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }], include: { ministry: { select: { name: true } } } }),
+    db.ministry.findMany({ orderBy: { order: "asc" }, select: { id: true, name: true } }),
+  ]);
   return (
     <>
       <AdminTitle title="Cultes & horaires" text="Ces horaires s'affichent sur le site, le compte à rebours et le pied de page." />
       <Panel className="mb-6">
         <h2 className="mb-4 font-serif text-2xl font-semibold text-night-900">Nouveau rendez-vous</h2>
-        <ServiceForm />
+        <ServiceForm ministries={ministries} />
       </Panel>
       <div className="space-y-4">
         {services.map((s) => (
@@ -26,12 +29,12 @@ export default async function ServicesAdmin() {
               <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3">
                 <span>
                   <span className="font-serif text-xl font-semibold text-night-900">{s.name}</span>
-                  <span className="ml-3 text-sm text-night-800/60">{recurrenceLabel(s.dayOfWeek, s.weeks)} · {s.startTime.replace(":", "h")}{s.endTime && ` – ${s.endTime.replace(":", "h")}`}</span>
+                  <span className="ml-3 text-sm text-night-800/60">{s.ministry && `${s.ministry.name} · `}{recurrenceLabel(s.dayOfWeek, s.weeks)} · {s.startTime.replace(":", "h")}{s.endTime && ` – ${s.endTime.replace(":", "h")}`}</span>
                 </span>
                 <span className="text-sm font-bold text-gold-600">Modifier</span>
               </summary>
               <div className="mt-5 border-t border-night-900/10 pt-5">
-                <ServiceForm service={s} />
+                <ServiceForm service={s} ministries={ministries} />
                 <div className="mt-3 text-right">
                   <DeleteButton action={deleteService.bind(null, s.id)} confirmText={`Supprimer « ${s.name} » ?`} />
                 </div>

@@ -43,6 +43,7 @@ model Ministry {
   order       Int              @default(0)
   members     MinistryMember[]
   events      Event[]
+  services    Service[]
 }
 
 model MinistryMember {
@@ -58,15 +59,19 @@ model MinistryMember {
 // Culte ou réunion récurrente (dayOfWeek : 0 = dimanche ... 6 = samedi)
 // weeks : semaines du mois concernées (1 = premier … 5 = cinquième) ; vide = chaque semaine
 model Service {
-  id          String  @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
   description String?
   dayOfWeek   Int
-  weeks       Int[]   @default([])
+  weeks       Int[]     @default([])
   startTime   String
   endTime     String?
-  location    String  @default("Temple principal")
-  order       Int     @default(0)
+  location    String    @default("Temple principal")
+  order       Int       @default(0)
+  // false : pas de rappel envoyé à tous les abonnés (ex. répétitions)
+  reminders   Boolean   @default(true)
+  ministryId  String?
+  ministry    Ministry? @relation(fields: [ministryId], references: [id], onDelete: SetNull)
 }
 
 model Announcement {

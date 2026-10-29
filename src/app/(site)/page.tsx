@@ -26,7 +26,7 @@ import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export default async function HomePage() {
   const [services, ministries, announcements, upcomingEvents] = await Promise.all([
-    db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
+    db.service.findMany({ where: { ministryId: null }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 3 }),
     db.event.findMany({ where: { published: true, startAt: { gte: new Date() } }, orderBy: { startAt: "asc" }, take: 3 }),

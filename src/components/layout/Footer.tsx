@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { AnimatedLogo } from "../motion/AnimatedLogo";
 
 export async function Footer() {
-  const services = await db.service.findMany({ where: { weeks: { isEmpty: true } }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] });
+  const services = await db.service.findMany({ where: { weeks: { isEmpty: true }, ministryId: null }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] });
 
   return (
     <footer className="relative overflow-hidden bg-night-950 text-white/75">

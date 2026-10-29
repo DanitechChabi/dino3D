@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Clock, MapPin } from "lucide-react";
 import { db } from "@/lib/db";
+import Link from "next/link";
 import { DAYS, firstVisitFaq } from "@/content/site";
 import { recurrenceLabel } from "@/lib/recurrence";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -14,7 +15,7 @@ import { CalendarSubscribe } from "@/components/CalendarSubscribe";
 export const metadata: Metadata = { title: "Cultes & horaires" };
 
 export default async function ServicesPage() {
-  const services = await db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] });
+  const services = await db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }], include: { ministry: { select: { name: true, slug: true } } } });
   // La semaine commence le dimanche, jour du Seigneur
   const byDay = DAYS.map((day, i) => ({ day, items: services.filter((s) => s.dayOfWeek === i) })).filter((d) => d.items.length);
 
@@ -36,6 +37,9 @@ export default async function ServicesPage() {
                         <p className="font-serif text-3xl font-semibold text-night-900">{s.startTime.replace(":", "h")}</p>
                         <div className="min-w-0 flex-1">
                           <p className="font-bold text-night-900">{s.name}</p>
+                          {s.ministry && (
+                            <Link href={`/ministeres/${s.ministry.slug}`} className="mr-1.5 mt-0.5 inline-block rounded-full bg-night-950 px-2.5 py-0.5 text-xs font-bold text-gold-200">{s.ministry.name}</Link>
+                          )}
                           {s.weeks.length > 0 && (
                             <p className="mt-0.5 inline-block rounded-full bg-gold-300/30 px-2.5 py-0.5 text-xs font-bold text-gold-600">{recurrenceLabel(s.dayOfWeek, s.weeks)}</p>
                           )}
@@ -56,7 +60,7 @@ export default async function ServicesPage() {
       </section>
 
       <section className="bg-night-950 px-4 py-20">
-        <Countdown slots={services.map(({ name, dayOfWeek, weeks, startTime }) => ({ name, dayOfWeek, weeks, startTime }))} />
+        <Countdown slots={services.filter((s) => !s.ministryId).map(({ name, dayOfWeek, weeks, startTime }) => ({ name, dayOfWeek, weeks, startTime }))} />
         <div className="mx-auto mt-14 grid max-w-4xl gap-8 border-t border-white/10 pt-10 text-white md:grid-cols-2">
           <div>
             <p className="mb-3 font-serif text-2xl">Un rappel avant chaque culte</p>
