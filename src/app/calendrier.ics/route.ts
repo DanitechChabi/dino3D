@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { buildIcs } from "@/lib/ics";
-import { churchDateTime, churchParts } from "@/lib/time";
+import { churchDateTime, serviceOccurrences } from "@/lib/time";
 import { church } from "@/content/site";
 
 // Flux d'agenda auquel les téléphones s'abonnent : cultes hebdomadaires + événements, avec rappels intégrés.
@@ -12,13 +12,11 @@ export async function GET(request: Request) {
     db.event.findMany({ where: { published: true, startAt: { gte: since } }, orderBy: { startAt: "asc" } }),
   ]);
 
-  // Première occurrence de chaque culte : à partir d'un dimanche de référence passé
-  const ref = churchParts(new Date("2026-01-04T12:00:00Z")).day; // dimanche 4 janvier 2026
+  // Première occurrence de chaque culte depuis le 1er janvier 2026 (début de la récurrence)
+  const firsts = serviceOccurrences(services, new Date("2026-01-01T00:00:00+01:00"), 62);
   const ics = buildIcs(`${church.shortName} — ${church.city}`, [
     ...services.map((s) => {
-      const day = new Date(`${ref}T12:00:00Z`);
-      day.setUTCDate(day.getUTCDate() + s.dayOfWeek);
-      const d = day.toISOString().slice(0, 10);
+      const d = firsts.find((o) => o.service.id === s.id)!.day;
       return {
         uid: `service-${s.id}@ebb-jr`,
         title: s.name,
@@ -27,6 +25,7 @@ export async function GET(request: Request) {
         start: churchDateTime(d, s.startTime),
         end: s.endTime ? churchDateTime(d, s.endTime) : null,
         weeklyOn: s.dayOfWeek,
+        monthWeeks: s.weeks,
         alarms: [60],
         url: `${origin}/cultes`,
       };

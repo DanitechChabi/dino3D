@@ -32,8 +32,9 @@ export type IcsEvent = {
   start: Date;
   end?: Date | null;
   url?: string;
-  // Récurrence hebdomadaire (cultes)
+  // Récurrence des cultes : chaque semaine, ou certaines semaines du mois
   weeklyOn?: number;
+  monthWeeks?: number[];
   alarms?: number[]; // minutes avant le début
 };
 
@@ -61,7 +62,13 @@ export function buildIcs(name: string, events: IcsEvent[]) {
     if (e.description) lines.push(`DESCRIPTION:${esc(e.description)}`);
     if (e.location) lines.push(`LOCATION:${esc(e.location)}`);
     if (e.url) lines.push(`URL:${e.url}`);
-    if (e.weeklyOn !== undefined) lines.push(`RRULE:FREQ=WEEKLY;BYDAY=${DAY_CODES[e.weeklyOn]}`);
+    if (e.weeklyOn !== undefined) {
+      lines.push(
+        e.monthWeeks?.length
+          ? `RRULE:FREQ=MONTHLY;BYDAY=${e.monthWeeks.map((w) => `${w}${DAY_CODES[e.weeklyOn!]}`).join(",")}`
+          : `RRULE:FREQ=WEEKLY;BYDAY=${DAY_CODES[e.weeklyOn]}`,
+      );
+    }
     for (const m of e.alarms ?? []) {
       lines.push("BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${esc(e.title)}`, `TRIGGER:-PT${m}M`, "END:VALARM");
     }

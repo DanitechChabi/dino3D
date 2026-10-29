@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { AnimatedLogo } from "../motion/AnimatedLogo";
 
 export async function Footer() {
-  const services = await db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }], take: 5 });
+  const services = await db.service.findMany({ where: { weeks: { isEmpty: true } }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] });
 
   return (
     <footer className="relative overflow-hidden bg-night-950 text-white/75">
@@ -36,6 +36,9 @@ export async function Footer() {
                 <span className="text-white">{s.name}</span> — {DAYS[s.dayOfWeek]} {s.startTime.replace(":", "h")}
               </li>
             ))}
+            <li>
+              <Link href="/cultes" className="font-semibold text-gold-300 hover:text-gold-200">Programme complet →</Link>
+            </li>
           </ul>
         </div>
         <div>

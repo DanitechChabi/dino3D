@@ -2,19 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { occursInWeek } from "@/lib/recurrence";
 
-type Slot = { name: string; dayOfWeek: number; startTime: string };
+type Slot = { name: string; dayOfWeek: number; weeks: number[]; startTime: string };
 
 function nextOccurrence(slots: Slot[], now: Date) {
   let best: { slot: Slot; at: Date } | null = null;
   for (const slot of slots) {
     const [h, m] = slot.startTime.split(":").map(Number);
-    const at = new Date(now);
-    at.setHours(h, m, 0, 0);
-    let diff = (slot.dayOfWeek - now.getDay() + 7) % 7;
-    if (diff === 0 && at <= now) diff = 7;
-    at.setDate(at.getDate() + diff);
-    if (!best || at < best.at) best = { slot, at };
+    // Cherche la prochaine date valide sur 6 semaines (couvre les rendez-vous mensuels)
+    for (let i = 0; i < 42; i++) {
+      const at = new Date(now);
+      at.setDate(now.getDate() + i);
+      at.setHours(h, m, 0, 0);
+      if (at.getDay() !== slot.dayOfWeek || at <= now || !occursInWeek(slot.weeks, at.getDate())) continue;
+      if (!best || at < best.at) best = { slot, at };
+      break;
+    }
   }
   return best;
 }

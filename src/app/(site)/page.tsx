@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin, Pin } from "lucide-react";
 import { db } from "@/lib/db";
-import { church, lightVerse, DAYS } from "@/content/site";
+import { church, lightVerse } from "@/content/site";
+import { formatDay, serviceOccurrences } from "@/lib/time";
 import { Hero } from "@/components/motion/Hero";
 import { Reveal } from "@/components/motion/Reveal";
 import { ScrollLightText } from "@/components/motion/ScrollLightText";
@@ -30,6 +31,8 @@ export default async function HomePage() {
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 3 }),
     db.event.findMany({ where: { published: true, startAt: { gte: new Date() } }, orderBy: { startAt: "asc" }, take: 3 }),
   ]);
+
+  const week = serviceOccurrences(services, new Date(), 6);
 
   return (
     <>
@@ -70,12 +73,17 @@ export default async function HomePage() {
       {/* Horaires et compte à rebours */}
       <section className="relative bg-ivory py-24 sm:py-32">
         <div className="mx-auto max-w-6xl px-4">
-          <SectionTitle eyebrow="Cultes & réunions" title="Venez adorer avec nous" text="Chaque semaine, nous nous rassemblons pour louer Dieu, prier et écouter Sa Parole." />
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionTitle eyebrow="Cette semaine à l'église" title="Venez adorer avec nous" text="Nous nous rassemblons pour louer Dieu, prier et écouter Sa Parole." />
+            <Link href="/cultes" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+              Programme complet <ArrowRight className="size-4" />
+            </Link>
+          </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((s, i) => (
-              <Reveal key={s.id} delay={i * 0.08}>
+            {week.map(({ service: s, startAt, day }, i) => (
+              <Reveal key={s.id + day} delay={(i % 4) * 0.08}>
                 <TiltCard className="h-full rounded-3xl border border-night-900/10 bg-white p-6 shadow-[0_20px_50px_-30px_rgba(7,13,36,.4)]">
-                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-600">{DAYS[s.dayOfWeek]}</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-600">{formatDay(startAt, false)}</p>
                   <p className="mt-3 font-serif text-5xl font-semibold text-night-900">{s.startTime.replace(":", "h")}</p>
                   <h3 className="mt-3 text-lg font-bold text-night-900">{s.name}</h3>
                   {s.description && <p className="mt-1 text-sm leading-relaxed text-night-800/70">{s.description}</p>}
@@ -95,7 +103,7 @@ export default async function HomePage() {
           <Reveal className="relative mt-12 overflow-hidden rounded-[2rem] bg-night-950 px-4 py-12 sm:py-14">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_120%,rgba(212,164,60,.35),transparent)]" />
             <div className="relative">
-              <Countdown slots={services.map(({ name, dayOfWeek, startTime }) => ({ name, dayOfWeek, startTime }))} />
+              <Countdown slots={services.map(({ name, dayOfWeek, weeks, startTime }) => ({ name, dayOfWeek, weeks, startTime }))} />
             </div>
           </Reveal>
         </div>

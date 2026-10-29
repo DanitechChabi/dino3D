@@ -38,14 +38,16 @@ const serviceSchema = z.object({
   endTime: z.union([z.literal(""), z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Heure invalide")]).optional(),
   location: z.string().trim().min(2, "Lieu requis").max(100),
   order: z.coerce.number().int().min(0).max(99).default(0),
+  weeks: z.array(z.coerce.number().int().min(1).max(5)).max(5),
 });
 
 export async function saveService(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireRole("ADMIN");
-  const parsed = serviceSchema.safeParse(Object.fromEntries(formData));
+  const parsed = serviceSchema.safeParse({ ...Object.fromEntries(formData), weeks: formData.getAll("weeks") });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, values: keepValues(formData) };
-  const { id, endTime, description, ...data } = parsed.data;
-  const row = { ...data, endTime: endTime || null, description: description || null };
+  const { id, endTime, description, weeks, ...data } = parsed.data;
+  // Les 5 semaines cochées reviennent à « chaque semaine »
+  const row = { ...data, weeks: weeks.length === 5 ? [] : [...new Set(weeks)].sort(), endTime: endTime || null, description: description || null };
   if (id) await db.service.update({ where: { id }, data: row });
   else await db.service.create({ data: row });
   revalidatePath("/", "layout");

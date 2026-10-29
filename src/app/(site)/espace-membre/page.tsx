@@ -7,7 +7,7 @@ import { logout } from "@/actions/auth";
 import { cancelRegistration } from "@/actions/events";
 import { NotifyButton } from "@/components/NotifyButton";
 import { DateBlock } from "@/components/events/DateBlock";
-import { DAYS } from "@/content/site";
+import { formatDay, serviceOccurrences } from "@/lib/time";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
 import { MinistryToggles, PasswordForm, ProfileForm } from "@/components/forms/MemberForms";
@@ -90,11 +90,11 @@ export default async function MemberPage() {
               <Reveal>
                 <Card title="Cette semaine" dark>
                   <ul className="space-y-3">
-                    {services.map((s) => (
-                      <li key={s.id} className="flex items-baseline justify-between gap-3 border-b border-white/10 pb-3 last:border-0">
+                    {serviceOccurrences(services, new Date(), 6).map(({ service: s, startAt, day }) => (
+                      <li key={s.id + day} className="flex items-baseline justify-between gap-3 border-b border-white/10 pb-3 last:border-0">
                         <span className="text-sm">
                           <span className="block font-semibold text-white">{s.name}</span>
-                          <span className="text-white/60">{DAYS[s.dayOfWeek]}</span>
+                          <span className="text-white/60">{formatDay(startAt, false)}</span>
                         </span>
                         <span className="font-serif text-xl text-gold-300">{s.startTime.replace(":", "h")}</span>
                       </li>

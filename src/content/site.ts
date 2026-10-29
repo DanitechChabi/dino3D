@@ -102,9 +102,9 @@ export const team: { name: string; role: string; photo?: string }[] = [
 ];
 
 export const firstVisitFaq = [
-  { q: "Comment se déroule un culte ?", a: "Le culte commence par un temps de louange et de prière, suivi de la lecture de la Parole et de la prédication. Il se termine par la prière et les annonces." },
+  { q: "Comment se déroule un culte ?", a: "Le culte a lieu chaque dimanche de 9h30 à 11h30. Il commence par un temps de louange et de prière, suivi de la lecture de la Parole et de la prédication, et se termine par la prière et les annonces." },
   { q: "Comment dois-je m'habiller ?", a: "Venez avec une tenue correcte et décente, dans laquelle vous êtes à l'aise. Ce qui compte pour Dieu, c'est votre cœur." },
-  { q: "Y a-t-il quelque chose pour les enfants ?", a: "Oui, l'École du dimanche accueille les enfants pendant le culte, avec des moniteurs formés." },
+  { q: "Y a-t-il quelque chose pour les enfants ?", a: "Oui. L'École du dimanche, de 9h à 9h30, juste avant le culte, est ouverte à tous les âges, enfants compris. Les enfants sont aussi les bienvenus au culte avec leurs parents." },
   { q: "Dois-je donner une offrande ?", a: "Non, les visiteurs ne sont jamais obligés de donner. L'offrande est un acte d'adoration libre des membres." },
   { q: "Comment rencontrer le pasteur ?", a: "Après le culte, l'équipe d'accueil peut vous présenter au pasteur. Vous pouvez aussi nous écrire via la page Contact." },
 ];

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Clock, MapPin } from "lucide-react";
 import { db } from "@/lib/db";
 import { DAYS, firstVisitFaq } from "@/content/site";
+import { recurrenceLabel } from "@/lib/recurrence";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { Reveal } from "@/components/motion/Reveal";
@@ -23,7 +24,7 @@ export default async function ServicesPage() {
 
       <section className="py-24">
         <div className="mx-auto max-w-4xl px-4">
-          <SectionTitle center eyebrow="Programme hebdomadaire" title="Nos rendez-vous de la semaine" />
+          <SectionTitle center eyebrow="Programme de l'église" title="Nos rendez-vous" text="Certains rendez-vous n'ont lieu que certaines semaines du mois : leur fréquence est indiquée en doré." />
           <div className="space-y-8">
             {byDay.map(({ day, items }, i) => (
               <Reveal key={day} delay={i * 0.05}>
@@ -35,6 +36,9 @@ export default async function ServicesPage() {
                         <p className="font-serif text-3xl font-semibold text-night-900">{s.startTime.replace(":", "h")}</p>
                         <div className="min-w-0 flex-1">
                           <p className="font-bold text-night-900">{s.name}</p>
+                          {s.weeks.length > 0 && (
+                            <p className="mt-0.5 inline-block rounded-full bg-gold-300/30 px-2.5 py-0.5 text-xs font-bold text-gold-600">{recurrenceLabel(s.dayOfWeek, s.weeks)}</p>
+                          )}
                           {s.description && <p className="text-sm text-night-800/70">{s.description}</p>}
                         </div>
                         <div className="text-xs text-night-800/60">
@@ -52,7 +56,7 @@ export default async function ServicesPage() {
       </section>
 
       <section className="bg-night-950 px-4 py-20">
-        <Countdown slots={services.map(({ name, dayOfWeek, startTime }) => ({ name, dayOfWeek, startTime }))} />
+        <Countdown slots={services.map(({ name, dayOfWeek, weeks, startTime }) => ({ name, dayOfWeek, weeks, startTime }))} />
         <div className="mx-auto mt-14 grid max-w-4xl gap-8 border-t border-white/10 pt-10 text-white md:grid-cols-2">
           <div>
             <p className="mb-3 font-serif text-2xl">Un rappel avant chaque culte</p>

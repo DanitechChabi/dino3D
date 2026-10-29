@@ -1,4 +1,5 @@
 import { church } from "@/content/site";
+import { occursInWeek } from "./recurrence";
 
 const TZ = church.timeZone;
 
@@ -54,9 +55,9 @@ export function addDays(day: string, n: number) {
   return d.toISOString().slice(0, 10);
 }
 
-type WeeklySlot = { id: string; name: string; dayOfWeek: number; startTime: string; endTime: string | null; location: string; description: string | null };
+type WeeklySlot = { id: string; name: string; dayOfWeek: number; weeks: number[]; startTime: string; endTime: string | null; location: string; description: string | null };
 
-/** Prochaines occurrences des cultes hebdomadaires entre `from` et `from + days`. */
+/** Occurrences des cultes (hebdomadaires ou certaines semaines du mois) entre `from` et `from + days`. */
 export function serviceOccurrences<T extends WeeklySlot>(services: T[], from: Date, days: number) {
   const start = churchParts(from).day;
   const out: { service: T; startAt: Date; endAt: Date | null; day: string }[] = [];
@@ -64,7 +65,7 @@ export function serviceOccurrences<T extends WeeklySlot>(services: T[], from: Da
     const day = addDays(start, i);
     const weekday = new Date(`${day}T12:00:00Z`).getUTCDay();
     for (const s of services) {
-      if (s.dayOfWeek !== weekday) continue;
+      if (s.dayOfWeek !== weekday || !occursInWeek(s.weeks, Number(day.slice(8)))) continue;
       const startAt = churchDateTime(day, s.startTime);
       if (startAt < from) continue;
       out.push({ service: s, startAt, endAt: s.endTime ? churchDateTime(day, s.endTime) : null, day });

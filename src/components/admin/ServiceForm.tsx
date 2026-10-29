@@ -5,7 +5,7 @@ import { saveService } from "@/actions/admin";
 import { FieldError, FormMessage, SubmitButton, kept } from "../forms/ui";
 import { DAYS } from "@/content/site";
 
-type Service = { id: string; name: string; description: string | null; dayOfWeek: number; startTime: string; endTime: string | null; location: string; order: number };
+type Service = { id: string; name: string; description: string | null; dayOfWeek: number; weeks: number[]; startTime: string; endTime: string | null; location: string; order: number };
 
 export function ServiceForm({ service }: { service?: Service }) {
   const [state, action] = useActionState(saveService, undefined);
@@ -41,6 +41,17 @@ export function ServiceForm({ service }: { service?: Service }) {
         <label className="label">Fin</label>
         <input name="endTime" type="time" className="field" defaultValue={kept(state, "endTime", service?.endTime ?? "")} />
       </div>
+      <fieldset className="sm:col-span-6">
+        <legend className="label">Semaines du mois (aucune case cochée = chaque semaine)</legend>
+        <div className="flex flex-wrap gap-2">
+          {[1, 2, 3, 4, 5].map((w) => (
+            <label key={w} className="flex cursor-pointer items-center gap-2 rounded-full border border-night-900/15 bg-white px-3 py-1.5 text-sm has-[:checked]:border-gold-500 has-[:checked]:bg-gold-300/30">
+              <input type="checkbox" name="weeks" value={w} defaultChecked={service?.weeks.includes(w)} className="size-4 accent-gold-500" />
+              {w === 1 ? "1re" : `${w}e`} semaine
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <div className="sm:col-span-5">
         <label className="label">Description</label>
         <input name="description" className="field" defaultValue={kept(state, "description", service?.description ?? "")} />

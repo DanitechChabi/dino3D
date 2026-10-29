@@ -12,12 +12,17 @@ const ministries = [
   { slug: "evangelisation", name: "Évangélisation & Missions", icon: "globe", summary: "Allez, faites de toutes les nations des disciples.", description: "Sorties d'évangélisation, distribution de traités, visites et soutien aux missions : nous portons l'Évangile à Tanmey et au-delà (Matthieu 28:19-20)." },
 ];
 
-// Horaires provisoires — À COMPLÉTER / modifier depuis l'administration.
+// Programme réel de l'église (modifiable ensuite depuis l'administration).
+// weeks : semaines du mois concernées ; vide = chaque semaine.
 const services = [
-  { name: "Culte du dimanche", dayOfWeek: 0, startTime: "09:00", endTime: "12:00", description: "Louange, prière et prédication de la Parole.", order: 1 },
-  { name: "École du dimanche", dayOfWeek: 0, startTime: "08:00", endTime: "09:00", description: "Étude biblique pour tous les âges.", order: 0 },
-  { name: "Réunion de prière", dayOfWeek: 3, startTime: "18:00", endTime: "19:30", description: "Intercession pour l'église, les familles et la nation.", order: 2 },
-  { name: "Étude biblique", dayOfWeek: 5, startTime: "18:00", endTime: "19:30", description: "Étude approfondie d'un livre de la Bible.", order: 3 },
+  { name: "École du dimanche", dayOfWeek: 0, weeks: [], startTime: "09:00", endTime: "09:30", description: "Étude biblique pour tous les âges.", order: 0 },
+  { name: "Culte du dimanche", dayOfWeek: 0, weeks: [], startTime: "09:30", endTime: "11:30", description: "Louange, prière et prédication de la Parole.", order: 1 },
+  { name: "Réunion des couples", dayOfWeek: 0, weeks: [1], startTime: "13:00", endTime: null, description: "Enseignement et partage pour les couples.", order: 2 },
+  { name: "Jeunesse", dayOfWeek: 0, weeks: [1, 3], startTime: "17:00", endTime: "18:30", description: "Rencontre de la jeunesse, à la place de l'étude biblique.", order: 3 },
+  { name: "Étude biblique", dayOfWeek: 0, weeks: [2, 4, 5], startTime: "17:00", endTime: "18:30", description: "Étude approfondie de la Parole de Dieu.", order: 4 },
+  { name: "Réunion de prière", dayOfWeek: 3, weeks: [], startTime: "18:00", endTime: "19:00", description: "Intercession pour l'église, les familles et la nation.", order: 5 },
+  { name: "Réunion de prière", dayOfWeek: 5, weeks: [2, 3, 4, 5], startTime: "19:00", endTime: "20:00", description: "Prière et intercession.", order: 6 },
+  { name: "Veillée de prière", dayOfWeek: 5, weeks: [1], startTime: "19:00", endTime: "22:00", description: "Une soirée de prière le premier vendredi du mois.", order: 7 },
 ];
 
 async function main() {
