@@ -13,7 +13,7 @@ export function pushConfigured() {
   const pub = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const priv = process.env.VAPID_PRIVATE_KEY;
   configured = Boolean(pub && priv);
-  if (configured) webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:ebbtanmey@gmail.com", pub!, priv!);
+  if (configured) webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:eglisebbjr.benin@gmail.com", pub!, priv!);
   return configured;
 }
 

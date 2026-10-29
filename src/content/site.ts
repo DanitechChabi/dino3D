@@ -11,7 +11,7 @@ export const church = {
   phone: "01 97 60 97 49",
   assistancePhone: "01 53 73 62 65",
   whatsapp: "", // À COMPLÉTER : numéro au format international sans « + », ex. 22900000000
-  email: "ebbtanmey@gmail.com",
+  email: "eglisebbjr.benin@gmail.com",
   socials: {
     facebook: "", // À COMPLÉTER
     youtube: "https://www.youtube.com/@genietechw",
