@@ -57,6 +57,16 @@ URL de notification à déclarer chez le fournisseur : `https://<site>/api/paiem
   clôture avec **message de remerciement** et notification.
 - **Transparence** : historique public des aides apportées et des montants versés.
 
+## Phase 5 (livrée) : lives et prédications
+
+- **Directs** : programmation depuis l'administration (lien YouTube ou Facebook), bouton « Démarrer le direct »
+  → pastille « ● EN DIRECT » flottante sur tout le site + notification aux abonnés ; « Terminer » → archives.
+- **Page « En direct »** (`/direct`) : lecteur, bouton « Donner pendant le culte » (quête en ligne), ou compte à
+  rebours du prochain direct avec activation des rappels.
+- **Médiathèque** (`/predications`) : archives filtrables par série et prédicateur, recherche (titre, passage),
+  page de prédication avec la même série ; ajout manuel de prédications passées ; dernière prédication sur l'accueil.
+- **Lecteur léger** : la vidéo (YouTube sans cookies publicitaires) ne se charge qu'au clic.
+
 ## Démarrage
 
 Prérequis : Node.js 20.9+ et PostgreSQL.
@@ -102,4 +112,3 @@ sessions signées (JWT HS256 dans un cookie httpOnly), mots de passe hachés ave
 ## Prochaines phases
 
 - Branchement de l'API SaaS Pay (documentation attendue)
-- Phase 5 — Lives : programmation, page en direct, archives

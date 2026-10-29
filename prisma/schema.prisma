@@ -290,3 +290,39 @@ model SolidarityPayout {
   recordedBy   User?          @relation(fields: [recordedById], references: [id], onDelete: SetNull)
   createdAt    DateTime       @default(now())
 }
+
+// ——— Phase 5 : lives et prédications ———
+
+enum LiveStatus {
+  SCHEDULED // programmé
+  LIVE // en cours de diffusion
+  ENDED // terminé (archivé si une vidéo est disponible)
+  CANCELLED
+}
+
+enum LivePlatform {
+  YOUTUBE
+  FACEBOOK
+}
+
+model Livestream {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  description String       @default("")
+  preacher    String?
+  series      String? // série de prédications
+  scripture   String? // passage biblique principal
+  scheduledAt DateTime
+  startedAt   DateTime?
+  endedAt     DateTime?
+  status      LiveStatus   @default(SCHEDULED)
+  platform    LivePlatform @default(YOUTUBE)
+  url         String? // lien du direct puis de la rediffusion
+  videoId     String? // identifiant YouTube extrait du lien
+  published   Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status, scheduledAt])
+}

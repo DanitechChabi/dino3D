@@ -56,13 +56,13 @@ export function Header({ user }: { user: { firstName: string; isStaff: boolean }
           </Link>
 
           <nav className="hidden items-center gap-1 xl:flex" aria-label="Navigation principale">
-            {nav.map((item) => {
+            {nav.filter((item) => item.href !== "/").map((item) => {
               const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`relative whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
                     light ? "text-white/85 hover:text-white" : "text-night-800 hover:text-night-950"
                   }`}
                 >
@@ -88,12 +88,14 @@ export function Header({ user }: { user: { firstName: string; isStaff: boolean }
             </Link>
             <Link
               href={user ? (user.isStaff ? "/admin" : "/espace-membre") : "/connexion"}
+              aria-label={user ? `Mon espace (${user.firstName})` : "Espace membre"}
               className={`hidden items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition sm:inline-flex ${
                 light ? "bg-white/10 text-white ring-1 ring-white/25 hover:bg-white/20" : "bg-night-900 text-gold-200 hover:bg-night-800"
               }`}
             >
               <UserRound className="size-4" />
-              {user ? user.firstName : "Espace membre"}
+              {/* Sur écran moyen, l'icône seule laisse la place au menu */}
+              <span className="whitespace-nowrap xl:hidden 2xl:inline">{user ? user.firstName : "Espace membre"}</span>
             </Link>
             <button
               onClick={() => setOpen((o) => !o)}
@@ -123,7 +125,7 @@ export function Header({ user }: { user: { firstName: string; isStaff: boolean }
               animate="show"
               transition={{ staggerChildren: 0.06, delayChildren: 0.25 }}
             >
-              {[...nav, { href: "/solidarite", label: "Solidarité" }, { href: "/donner", label: "Faire un don" }, { href: user ? "/espace-membre" : "/connexion", label: user ? "Mon espace" : "Espace membre" }].map((item) => (
+              {[...nav, { href: "/direct", label: "En direct" }, { href: "/solidarite", label: "Solidarité" }, { href: "/donner", label: "Faire un don" }, { href: user ? "/espace-membre" : "/connexion", label: user ? "Mon espace" : "Espace membre" }].map((item) => (
                 <motion.li
                   key={item.href + item.label}
                   variants={{ hidden: { opacity: 0, x: -30, filter: "blur(6px)" }, show: { opacity: 1, x: 0, filter: "blur(0px)" } }}

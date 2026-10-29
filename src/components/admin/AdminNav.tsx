@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing, HandCoins, HeartHandshake } from "lucide-react";
+import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing, HandCoins, HeartHandshake, Radio } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/admin/evenements", label: "Événements", icon: CalendarHeart },
+  { href: "/admin/lives", label: "Lives & prédications", icon: Radio },
   { href: "/admin/annonces", label: "Annonces", icon: Megaphone },
   { href: "/admin/messages", label: "Messages & prières", icon: Mail },
   { href: "/admin/finances", label: "Finances", icon: HandCoins, treasurer: true },

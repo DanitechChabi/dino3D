@@ -23,16 +23,18 @@ import { MinistryIcon } from "@/components/MinistryIcon";
 import { ChurchStats } from "@/components/ChurchStats";
 import { DateBlock } from "@/components/events/DateBlock";
 import { ProgressBar } from "@/components/solidarity/Progress";
+import { VideoPlayer } from "@/components/live/VideoPlayer";
 import { caseTotals } from "@/lib/solidarity";
 import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export default async function HomePage() {
-  const [services, ministries, announcements, upcomingEvents, openCases] = await Promise.all([
+  const [services, ministries, announcements, upcomingEvents, openCases, lastSermon] = await Promise.all([
     db.service.findMany({ where: { ministryId: null }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 3 }),
     db.event.findMany({ where: { published: true, startAt: { gte: new Date() } }, orderBy: { startAt: "asc" }, take: 3 }),
     db.solidarityCase.findMany({ where: { status: "OPEN", visibility: { not: "MEMBERS" } }, orderBy: { reviewedAt: "desc" }, take: 2 }),
+    db.livestream.findFirst({ where: { status: "ENDED", published: true, url: { not: null } }, orderBy: { scheduledAt: "desc" } }),
   ]);
   const caseSums = await caseTotals(openCases.map((c) => c.id));
 
@@ -172,6 +174,25 @@ export default async function HomePage() {
       </section>
 
       <VerseMarquee />
+
+      {/* Dernière prédication */}
+      {lastSermon?.url && (
+        <section className="relative overflow-hidden bg-night-950 py-24 text-white">
+          <div className="pointer-events-none absolute -right-32 top-0 size-[32rem] rounded-full bg-gold-500/10 blur-3xl" />
+          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1.3fr_1fr]">
+            <Reveal>
+              <VideoPlayer platform={lastSermon.platform} url={lastSermon.url} videoId={lastSermon.videoId} title={lastSermon.title} />
+            </Reveal>
+            <div>
+              <SectionTitle dark eyebrow="Dernière prédication" title={lastSermon.title} text={[lastSermon.preacher, lastSermon.scripture].filter(Boolean).join(" · ") || undefined} />
+              <div className="flex flex-wrap gap-3">
+                <MagneticButton href="/predications">Toutes les prédications</MagneticButton>
+                <MagneticButton href="/direct" variant="ghost">En direct</MagneticButton>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* La vie de l'église en images */}
       <section className="overflow-hidden bg-ivory py-24 sm:py-32">
