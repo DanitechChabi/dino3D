@@ -54,6 +54,24 @@ async function main() {
     });
   }
 
+  // Événement réel passé, relié à son récit sur le blog
+  await db.event.upsert({
+    where: { slug: "conference-couple-2026" },
+    update: {},
+    create: {
+      slug: "conference-couple-2026",
+      title: "Conférence sur le couple : bâtir son union sur l'amour de Christ",
+      category: "Conférence",
+      summary: "Une journée pour apprendre à vivre le mariage selon la volonté de Dieu, avec des participants de l'EBB-JR et d'Églises-sœurs.",
+      description: "Apprendre et vivre dans la volonté de Dieu, l'instigateur même de l'union sacrée du mariage, préserve les couples de bien des maux qui les minent.",
+      location: "EBB-JR de Tanmey",
+      startAt: new Date("2026-09-05T09:00:00+01:00"),
+      endAt: new Date("2026-09-05T19:00:00+01:00"),
+      coverUrl: "/galerie/conference-couple-2026/conference-02.jpg",
+      articleSlug: "conference-couple-2026",
+    },
+  });
+
   console.log(`Seed terminé. Administrateur : ${phone}`);
 }
 

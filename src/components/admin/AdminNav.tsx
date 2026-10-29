@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { LayoutDashboard, Users, CalendarClock, Megaphone, Mail } from "lucide-react";
+import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/admin/evenements", label: "Événements", icon: CalendarHeart },
   { href: "/admin/annonces", label: "Annonces", icon: Megaphone },
   { href: "/admin/messages", label: "Messages & prières", icon: Mail },
   { href: "/admin/membres", label: "Membres", icon: Users, adminOnly: true },
   { href: "/admin/cultes", label: "Cultes & horaires", icon: CalendarClock, adminOnly: true },
+  { href: "/admin/notifications", label: "Notifications", icon: BellRing, adminOnly: true },
 ];
 
 export function AdminNav({ isAdmin }: { isAdmin: boolean }) {

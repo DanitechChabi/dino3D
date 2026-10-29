@@ -7,6 +7,8 @@ import { SectionTitle } from "@/components/layout/SectionTitle";
 import { Reveal } from "@/components/motion/Reveal";
 import { Countdown } from "@/components/motion/Countdown";
 import { Accordion } from "@/components/motion/Accordion";
+import { NotifyButton } from "@/components/NotifyButton";
+import { CalendarSubscribe } from "@/components/CalendarSubscribe";
 
 export const metadata: Metadata = { title: "Cultes & horaires" };
 
@@ -51,6 +53,16 @@ export default async function ServicesPage() {
 
       <section className="bg-night-950 px-4 py-20">
         <Countdown slots={services.map(({ name, dayOfWeek, startTime }) => ({ name, dayOfWeek, startTime }))} />
+        <div className="mx-auto mt-14 grid max-w-4xl gap-8 border-t border-white/10 pt-10 text-white md:grid-cols-2">
+          <div>
+            <p className="mb-3 font-serif text-2xl">Un rappel avant chaque culte</p>
+            <NotifyButton dark />
+          </div>
+          <div>
+            <p className="mb-3 font-serif text-2xl">Les horaires dans votre agenda</p>
+            <CalendarSubscribe dark />
+          </div>
+        </div>
       </section>
 
       <section id="premiere-visite" className="bg-parchment py-24">

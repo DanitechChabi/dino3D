@@ -15,6 +15,17 @@ Application web de l'église : site public en motion design, espace membre et ad
   (les demandes de prière ne sont visibles que par le pasteur).
 - Les animations respectent le réglage « réduire les animations » du téléphone ou de l'ordinateur.
 
+## Phase 2 (livrée) : événements, programmes et rappels
+
+- **Événements** (`/evenements`) : calendrier mensuel animé (cultes + événements), page de chaque événement avec
+  compte à rebours, programme horaire, inscription en ligne (places limitées, accompagnants), ajout à l'agenda.
+- **Rappels gratuits** :
+  - **notifications** sur le téléphone ou l'ordinateur (bouton « Activer les rappels »), envoyées automatiquement la veille
+    et 1 h avant chaque culte et événement ; chacun choisit : cultes, événements, annonces ;
+  - **agenda synchronisé** : `/calendrier.ics` (abonnement iPhone, Android, Outlook) avec alarme intégrée.
+- **Administration** : création des événements (programme, image, inscriptions), liste des inscrits et export Excel,
+  envoi d'une notification à tous les abonnés, option « notifier » sur les annonces.
+
 ## Démarrage
 
 Prérequis : Node.js 20.9+ et PostgreSQL.
@@ -29,6 +40,16 @@ npm run dev                 # http://localhost:3000
 
 Connexion administrateur : le numéro `SEED_ADMIN_PHONE` et le mot de passe `SEED_ADMIN_PASSWORD` du fichier `.env`.
 **Changez ce mot de passe dès la première connexion** (Espace membre → Sécurité).
+
+## Rappels : mise en service
+
+1. Générer les clés : `npx web-push generate-vapid-keys`, puis renseigner dans `.env` :
+   `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` et un `CRON_SECRET` aléatoire.
+2. Programmer un appel **toutes les 15 minutes** (par ex. avec cron-job.org, gratuit) :
+   `GET https://<site>/api/cron/rappels` avec l'en-tête `Authorization: Bearer <CRON_SECRET>`.
+3. Sur iPhone, les notifications fonctionnent une fois le site ajouté à l'écran d'accueil (iOS 16.4+).
+
+Les SMS et WhatsApp pourront être branchés dans `src/lib/notify.ts` une fois un fournisseur choisi.
 
 ## Où modifier les contenus
 
@@ -49,7 +70,6 @@ sessions signées (JWT HS256 dans un cookie httpOnly), mots de passe hachés ave
 
 ## Prochaines phases
 
-2. Événements, calendrier, programmes, rappels (push, SMS, WhatsApp)
 3. Paiements SaaS Pay : dîmes, offrandes, quêtes, reçus
 4. Collectes de solidarité, tableau de bord trésorier
 5. Lives : programmation, page en direct, archives

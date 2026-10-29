@@ -15,31 +15,34 @@ enum Role {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  firstName    String
-  lastName     String
-  phone        String    @unique
-  email        String?   @unique
-  passwordHash String
-  role         Role      @default(MEMBRE)
-  active       Boolean   @default(true)
-  birthDate    DateTime?
-  baptismDate  DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  ministries   MinistryMember[]
-  announcements Announcement[]
+  id                String              @id @default(cuid())
+  firstName         String
+  lastName          String
+  phone             String              @unique
+  email             String?             @unique
+  passwordHash      String
+  role              Role                @default(MEMBRE)
+  active            Boolean             @default(true)
+  birthDate         DateTime?
+  baptismDate       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  ministries        MinistryMember[]
+  announcements     Announcement[]
+  registrations     EventRegistration[]
+  pushSubscriptions PushSubscription[]
 }
 
 model Ministry {
-  id          String   @id @default(cuid())
-  slug        String   @unique
+  id          String           @id @default(cuid())
+  slug        String           @unique
   name        String
   summary     String
   description String
-  icon        String   @default("heart")
-  order       Int      @default(0)
+  icon        String           @default("heart")
+  order       Int              @default(0)
   members     MinistryMember[]
+  events      Event[]
 }
 
 model MinistryMember {
@@ -65,14 +68,14 @@ model Service {
 }
 
 model Announcement {
-  id          String   @id @default(cuid())
-  title       String
-  body        String
-  published   Boolean  @default(true)
-  pinned      Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  authorId    String?
-  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  published Boolean  @default(true)
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
 }
 
 model ContactMessage {
@@ -85,4 +88,67 @@ model ContactMessage {
   isPrayer  Boolean  @default(false)
   handled   Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+// ——— Phase 2 : événements, programmes et rappels ———
+
+model Event {
+  id               String              @id @default(cuid())
+  slug             String              @unique
+  title            String
+  category         String              @default("Événement")
+  summary          String
+  description      String
+  location         String              @default("EBB-JR de Tanmey")
+  startAt          DateTime
+  endAt            DateTime?
+  coverUrl         String?
+  // Programme horaire : [{ "time": "09:00", "title": "Accueil et louange" }, …]
+  program          Json?
+  registrationOpen Boolean             @default(false)
+  capacity         Int?
+  published        Boolean             @default(true)
+  articleSlug      String? // récit publié sur le blog après l'événement
+  ministryId       String?
+  ministry         Ministry?           @relation(fields: [ministryId], references: [id], onDelete: SetNull)
+  registrations    EventRegistration[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([startAt])
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name      String
+  phone     String
+  guests    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, phone])
+}
+
+// Abonnement aux notifications du navigateur (membres et visiteurs)
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  services  Boolean  @default(true) // rappels des cultes et réunions
+  events    Boolean  @default(true) // rappels des événements
+  news      Boolean  @default(true) // annonces importantes
+  createdAt DateTime @default(now())
+}
+
+// Évite d'envoyer deux fois le même rappel (clé : « event:<id>:24h », « service:<id>:<date>:1h »…)
+model ReminderLog {
+  key    String   @id
+  sentAt DateTime @default(now())
+  count  Int      @default(0)
 }

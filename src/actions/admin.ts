@@ -6,6 +6,10 @@ import { Role } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/dal";
 import { keepValues, type FormState } from "@/lib/validation";
+import { notify } from "@/lib/notify";
+import { runReminders } from "@/lib/reminders";
+import { programFromText, slugify } from "@/lib/events";
+import { formatDay, formatTime, fromLocalInput } from "@/lib/time";
 
 // ——— Membres (pasteur / administrateur uniquement) ———
 
@@ -62,6 +66,7 @@ const announcementSchema = z.object({
   body: z.string().trim().min(5, "Texte requis").max(5000),
   pinned: z.boolean(),
   published: z.boolean(),
+  notify: z.boolean(),
 });
 
 export async function saveAnnouncement(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -72,13 +77,19 @@ export async function saveAnnouncement(_prev: FormState, formData: FormData): Pr
     body: formData.get("body"),
     pinned: formData.get("pinned") === "on",
     published: formData.get("published") === "on",
+    notify: formData.get("notify") === "on",
   });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, values: keepValues(formData) };
-  const { id, ...data } = parsed.data;
+  const { id, notify: shouldNotify, ...data } = parsed.data;
   if (id) await db.announcement.update({ where: { id }, data });
   else await db.announcement.create({ data: { ...data, authorId: user.id } });
   revalidatePath("/", "layout");
-  return { ok: true, message: id ? "Annonce mise à jour." : "Annonce publiée." };
+  let message = id ? "Annonce mise à jour." : "Annonce publiée.";
+  if (shouldNotify && data.published) {
+    const r = await notify("news", { title: data.title, body: data.body.slice(0, 160), url: "/annonces" });
+    message += r.skipped ? " (Notifications non configurées sur le serveur.)" : ` Notification envoyée à ${r.sent} appareil(s).`;
+  }
+  return { ok: true, message };
 }
 
 export async function deleteAnnouncement(id: string) {
@@ -97,4 +108,102 @@ export async function setMessageHandled(id: string, handled: boolean) {
   await db.contactMessage.update({ where: { id }, data: { handled } });
   revalidatePath("/admin/messages");
   revalidatePath("/admin");
+}
+
+// ——— Événements (responsables et plus) ———
+
+const eventSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().trim().min(3, "Titre requis").max(150),
+  category: z.string().trim().min(2).max(50),
+  summary: z.string().trim().min(10, "Résumé trop court").max(300),
+  description: z.string().trim().max(8000).default(""),
+  location: z.string().trim().min(2, "Lieu requis").max(150),
+  startAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Date de début invalide"),
+  endAt: z.union([z.literal(""), z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Date de fin invalide")]).optional(),
+  coverUrl: z.union([z.literal(""), z.string().regex(/^(\/|https:\/\/)\S+$/, "Lien d'image invalide")]).optional(),
+  program: z.string().max(4000).default(""),
+  capacity: z.union([z.literal(""), z.coerce.number().int().min(1).max(100000)]).optional(),
+  ministryId: z.string().optional(),
+  articleSlug: z.string().max(100).optional(),
+  registrationOpen: z.boolean(),
+  published: z.boolean(),
+  notify: z.boolean(),
+});
+
+export async function saveEvent(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireRole("RESPONSABLE");
+  const raw = Object.fromEntries(formData);
+  const parsed = eventSchema.safeParse({
+    ...raw,
+    registrationOpen: raw.registrationOpen === "on",
+    published: raw.published === "on",
+    notify: raw.notify === "on",
+  });
+  if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, values: keepValues(formData) };
+  const { id, startAt, endAt, coverUrl, program, capacity, ministryId, articleSlug, notify: shouldNotify, ...rest } = parsed.data;
+
+  const start = fromLocalInput(startAt);
+  const end = endAt ? fromLocalInput(endAt) : null;
+  if (end && end <= start) return { errors: { endAt: ["La fin doit être après le début"] }, values: keepValues(formData) };
+
+  const data = {
+    ...rest,
+    startAt: start,
+    endAt: end,
+    coverUrl: coverUrl || null,
+    program: programFromText(program),
+    capacity: capacity === "" || capacity === undefined ? null : capacity,
+    ministryId: ministryId || null,
+    articleSlug: articleSlug || null,
+  };
+
+  let slug: string;
+  if (id) {
+    slug = (await db.event.update({ where: { id }, data })).slug;
+  } else {
+    // Adresse lisible et unique : titre + date
+    const base = slugify(`${rest.title} ${startAt.slice(0, 10)}`) || "evenement";
+    slug = base;
+    for (let i = 2; await db.event.findUnique({ where: { slug } }); i++) slug = `${base}-${i}`;
+    await db.event.create({ data: { ...data, slug } });
+  }
+
+  let message = id ? "Événement mis à jour." : "Événement créé.";
+  if (shouldNotify && rest.published) {
+    const r = await notify("events", { title: `Nouvel événement : ${rest.title}`, body: `${formatDay(start)} à ${formatTime(start)} · ${rest.location}`, url: `/evenements/${slug}` });
+    message += r.skipped ? " (Notifications non configurées sur le serveur.)" : ` Notification envoyée à ${r.sent} appareil(s).`;
+  }
+  revalidatePath("/", "layout");
+  return { ok: true, message };
+}
+
+export async function deleteEvent(id: string) {
+  await requireRole("RESPONSABLE");
+  await db.event.delete({ where: { id } });
+  revalidatePath("/", "layout");
+}
+
+// ——— Notifications manuelles (pasteur / administrateur) ———
+
+const broadcastSchema = z.object({
+  audience: z.enum(["services", "events", "news"]),
+  title: z.string().trim().min(3, "Titre requis").max(80),
+  body: z.string().trim().min(3, "Message requis").max(200),
+  url: z.union([z.literal(""), z.string().regex(/^\/\S*$/, "Adresse interne commençant par /")]).optional(),
+});
+
+export async function sendBroadcast(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireRole("ADMIN");
+  const parsed = broadcastSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, values: keepValues(formData) };
+  const { audience, url, ...notice } = parsed.data;
+  const r = await notify(audience, { ...notice, url: url || "/" });
+  if (r.skipped) return { message: "Les notifications ne sont pas encore configurées sur le serveur (clés VAPID).", values: keepValues(formData) };
+  return { ok: true, message: `Notification envoyée à ${r.sent} appareil(s)${r.failed ? `, ${r.failed} échec(s)` : ""}.` };
+}
+
+export async function runRemindersNow() {
+  await requireRole("ADMIN");
+  return runReminders();
 }

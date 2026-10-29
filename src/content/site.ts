@@ -16,6 +16,9 @@ export const church = {
     youtube: "https://www.youtube.com/@genietechw",
     whatsappChannel: "https://whatsapp.com/channel/0029VbC6GNE9WtCAv1X50M2l",
   },
+  // Fuseau horaire de l'église (Bénin, UTC+1 sans heure d'été) — utilisé pour les dates et les rappels
+  timeZone: "Africa/Porto-Novo",
+  utcOffset: "+01:00",
   foundedYear: 2000,
   founder: "Pasteur CHABI BOUKO Youssouf",
   activeMembers: 100, // « une centaine de membres actifs »
@@ -111,10 +114,13 @@ export const nav = [
   { href: "/a-propos", label: "À propos" },
   { href: "/cultes", label: "Cultes" },
   { href: "/ministeres", label: "Ministères" },
-  { href: "/annonces", label: "Annonces" },
+  { href: "/evenements", label: "Événements" },
   { href: "/blog", label: "Blog" },
   { href: "/galerie", label: "Galerie" },
   { href: "/contact", label: "Contact" },
 ];
+
+// Liens supplémentaires du pied de page
+export const footerNav = [...nav.slice(0, 4), { href: "/annonces", label: "Annonces" }, ...nav.slice(4)];
 
 export const DAYS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];

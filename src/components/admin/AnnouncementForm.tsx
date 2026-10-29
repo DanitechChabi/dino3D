@@ -29,6 +29,7 @@ export function AnnouncementForm({ announcement }: { announcement?: A }) {
       <div className="flex flex-wrap gap-5 text-sm text-night-800">
         <label className="flex items-center gap-2"><input type="checkbox" name="published" defaultChecked={keptCheck(state, "published", announcement?.published ?? true)} className="size-4 accent-gold-500" /> Publiée</label>
         <label className="flex items-center gap-2"><input type="checkbox" name="pinned" defaultChecked={keptCheck(state, "pinned", announcement?.pinned)} className="size-4 accent-gold-500" /> Épinglée en haut</label>
+        <label className="flex items-center gap-2"><input type="checkbox" name="notify" defaultChecked={keptCheck(state, "notify", false)} className="size-4 accent-gold-500" /> Envoyer une notification aux abonnés</label>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <SubmitButton>{announcement ? "Enregistrer" : "Publier"}</SubmitButton>

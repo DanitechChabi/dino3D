@@ -14,6 +14,8 @@ const cormorant = Cormorant_Garamond({
 const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  // Adresse publique du site (aperçus de partage sur WhatsApp, Facebook…)
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: { default: `${church.name} — ${church.city}`, template: `%s · ${church.shortName}` },
   description: `${church.name} de ${church.city} : cultes, ministères, annonces et vie de l'église. ${church.tagline}.`,
 };

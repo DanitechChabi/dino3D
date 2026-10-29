@@ -2,7 +2,7 @@ import Link from "next/link";
 import { MapPin, Phone, Mail, Headset } from "lucide-react";
 import { YoutubeIcon } from "@/components/YoutubeIcon";
 import { WhatsappIcon } from "@/components/WhatsappIcon";
-import { church, nav, DAYS } from "@/content/site";
+import { church, footerNav, DAYS } from "@/content/site";
 import { db } from "@/lib/db";
 import { AnimatedLogo } from "../motion/AnimatedLogo";
 
@@ -21,7 +21,7 @@ export async function Footer() {
         <div>
           <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Navigation</h3>
           <ul className="space-y-2 text-sm">
-            {nav.map((n) => (
+            {footerNav.map((n) => (
               <li key={n.href}>
                 <Link href={n.href} className="transition hover:text-gold-200">{n.label}</Link>
               </li>

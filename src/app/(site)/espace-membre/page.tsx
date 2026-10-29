@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bell, HandCoins, LogOut, Pin, Settings, Shield } from "lucide-react";
+import { HandCoins, LogOut, Pin, Settings, Shield } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUser, hasRole, ROLE_LABELS } from "@/lib/dal";
 import { logout } from "@/actions/auth";
+import { cancelRegistration } from "@/actions/events";
+import { NotifyButton } from "@/components/NotifyButton";
+import { DateBlock } from "@/components/events/DateBlock";
 import { DAYS } from "@/content/site";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
@@ -22,11 +25,16 @@ function Card({ title, children, dark = false }: { title: string; children: Reac
 
 export default async function MemberPage() {
   const me = await requireUser();
-  const [user, ministries, services, announcements] = await Promise.all([
+  const [user, ministries, services, announcements, registrations] = await Promise.all([
     db.user.findUniqueOrThrow({ where: { id: me.id }, include: { ministries: true } }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
     db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 4 }),
+    db.eventRegistration.findMany({
+      where: { userId: me.id, event: { startAt: { gte: new Date() } } },
+      include: { event: { select: { title: true, slug: true, startAt: true } } },
+      orderBy: { event: { startAt: "asc" } },
+    }),
   ]);
   const joined = new Set(user.ministries.map((m) => m.ministryId));
 
@@ -111,12 +119,39 @@ export default async function MemberPage() {
                 </Card>
               </Reveal>
               <Reveal>
+                <Card title="Mes rappels">
+                  <p className="mb-4 text-sm text-night-800/70">La veille et 1 h avant chaque culte et événement, sur ce téléphone.</p>
+                  <NotifyButton />
+                </Card>
+              </Reveal>
+              <Reveal>
+                <Card title="Mes inscriptions">
+                  {registrations.length === 0 ? (
+                    <p className="text-sm text-night-800/60">
+                      Aucune inscription à venir. <Link href="/evenements" className="font-bold text-gold-600">Voir l&apos;agenda</Link>
+                    </p>
+                  ) : (
+                    <ul className="space-y-3">
+                      {registrations.map((r) => (
+                        <li key={r.id} className="flex items-center gap-3">
+                          <DateBlock date={r.event.startAt} />
+                          <div className="min-w-0 flex-1">
+                            <Link href={`/evenements/${r.event.slug}`} className="font-semibold text-night-900 hover:text-gold-600">{r.event.title}</Link>
+                            {r.guests > 0 && <p className="text-xs text-night-800/60">+ {r.guests} accompagnant{r.guests > 1 ? "s" : ""}</p>}
+                            <form action={cancelRegistration.bind(null, r.id)}>
+                              <button className="text-xs text-red-700 hover:underline">Annuler</button>
+                            </form>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </Card>
+              </Reveal>
+              <Reveal>
                 <div className="rounded-3xl border border-dashed border-gold-500/40 bg-parchment p-6">
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-600">Bientôt disponible</p>
-                  <ul className="mt-3 space-y-2 text-sm text-night-800">
-                    <li className="flex items-center gap-2"><HandCoins className="size-4 text-gold-600" /> Dîmes, offrandes et historique de mes dons</li>
-                    <li className="flex items-center gap-2"><Bell className="size-4 text-gold-600" /> Rappels des cultes et des réunions</li>
-                  </ul>
+                  <p className="mt-3 flex items-center gap-2 text-sm text-night-800"><HandCoins className="size-4 text-gold-600" /> Dîmes, offrandes et historique de mes dons</p>
                 </div>
               </Reveal>
             </div>

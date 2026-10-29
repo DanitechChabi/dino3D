@@ -20,13 +20,15 @@ import { LightParticles } from "@/components/motion/LightParticles";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { MinistryIcon } from "@/components/MinistryIcon";
 import { ChurchStats } from "@/components/ChurchStats";
+import { DateBlock } from "@/components/events/DateBlock";
 import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export default async function HomePage() {
-  const [services, ministries, announcements] = await Promise.all([
+  const [services, ministries, announcements, upcomingEvents] = await Promise.all([
     db.service.findMany({ orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 3 }),
+    db.event.findMany({ where: { published: true, startAt: { gte: new Date() } }, orderBy: { startAt: "asc" }, take: 3 }),
   ]);
 
   return (
@@ -98,6 +100,35 @@ export default async function HomePage() {
           </Reveal>
         </div>
       </section>
+
+      {upcomingEvents.length > 0 && (
+        <section className="bg-parchment py-24">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <SectionTitle eyebrow="Agenda" title="Prochains événements" />
+              <Link href="/evenements" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+                Tout l&apos;agenda <ArrowRight className="size-4" />
+              </Link>
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+              {upcomingEvents.map((e, i) => (
+                <Reveal key={e.id} delay={i * 0.08}>
+                  <Link href={`/evenements/${e.slug}`} className="block h-full">
+                    <TiltCard className="flex h-full gap-4 rounded-3xl border border-gold-500/20 bg-white p-5">
+                      <DateBlock date={e.startAt} />
+                      <div className="min-w-0">
+                        <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-gold-600">{e.category}</p>
+                        <h3 className="mt-1 font-serif text-xl font-semibold leading-tight text-night-900">{e.title}</h3>
+                        <p className="mt-2 line-clamp-2 text-sm text-night-800/70">{e.summary}</p>
+                      </div>
+                    </TiltCard>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <GospelJourney />
 
