@@ -31,9 +31,9 @@ function Digit({ value, label }: { value: number; label: string }) {
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={v}
-            initial={{ y: "-100%", opacity: 0, filter: "blur(4px)" }}
-            animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
-            exit={{ y: "100%", opacity: 0, filter: "blur(4px)" }}
+            initial={{ y: "-100%", opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-0 grid place-items-center font-serif text-3xl font-semibold tabular-nums text-gold-200 sm:text-4xl"
           >

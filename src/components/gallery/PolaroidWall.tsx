@@ -67,8 +67,8 @@ export function PolaroidWall({ photos }: { photos: Photo[] }) {
               <div className="relative aspect-square overflow-hidden bg-night-900">
                 <motion.div
                   className="absolute inset-0"
-                  initial={{ filter: "sepia(1) brightness(1.7) contrast(.6) blur(3px)" }}
-                  whileInView={{ filter: "sepia(0.12) brightness(1) contrast(1) blur(0px)" }}
+                  initial={{ filter: "sepia(1) brightness(1.7) contrast(.6)" }}
+                  whileInView={{ filter: "sepia(0.12) brightness(1) contrast(1)" }}
                   viewport={{ once: true }}
                   transition={{ duration: 3.2, delay: 0.6 + i * 0.12, ease: "easeOut" }}
                 >

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "motion/react";
 
-/** Poussière de lumière qui s'élève lentement (canvas, très léger). */
+/** Poussière de lumière qui s'élève lentement (canvas ; en pause hors de l'écran). */
 export function LightParticles({ density = 70, className }: { density?: number; className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const reduce = useReducedMotion();
@@ -17,7 +17,18 @@ export function LightParticles({ density = 70, className }: { density?: number; 
     let w = 0;
     let h = 0;
     let raf = 0;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    let visible = true;
+
+    // Halo dessiné une seule fois, puis simplement recopié (bien plus léger qu'un dégradé par particule)
+    const sprite = document.createElement("canvas");
+    sprite.width = sprite.height = 32;
+    const sctx = sprite.getContext("2d")!;
+    const grad = sctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    grad.addColorStop(0, "rgba(255, 236, 180, 1)");
+    grad.addColorStop(1, "rgba(255, 236, 180, 0)");
+    sctx.fillStyle = grad;
+    sctx.fillRect(0, 0, 32, 32);
 
     type P = { x: number; y: number; r: number; vy: number; vx: number; a: number; t: number };
     let ps: P[] = [];
@@ -38,44 +49,57 @@ export function LightParticles({ density = 70, className }: { density?: number; 
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.round((density * w) / 1200) + 20;
+      const count = Math.round((density * w) / 1200) + (w < 640 ? 12 : 20);
       ps = Array.from({ length: count }, () => spawn(true));
     };
 
-    const tick = () => {
+    // Sur téléphone, 30 images/s suffisent pour une poussière aussi lente et soulagent le processeur
+    const frameGap = window.innerWidth < 768 ? 1000 / 30 : 0;
+    let lastDraw = 0;
+    const tick = (now = performance.now()) => {
+      if (frameGap && now - lastDraw < frameGap - 2) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+      const step = frameGap ? 2 : 1;
+      lastDraw = now;
       ctx.clearRect(0, 0, w, h);
       for (const p of ps) {
-        p.y -= p.vy;
-        p.t += 0.02;
-        p.x += p.vx + Math.sin(p.t) * 0.15;
+        p.y -= p.vy * step;
+        p.t += 0.02 * step;
+        p.x += (p.vx + Math.sin(p.t) * 0.15) * step;
         if (p.y < -10) Object.assign(p, spawn(false));
-        const twinkle = p.a * (0.6 + 0.4 * Math.sin(p.t * 1.7));
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        g.addColorStop(0, `rgba(255, 236, 180, ${twinkle})`);
-        g.addColorStop(1, "rgba(255, 236, 180, 0)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.globalAlpha = p.a * (0.6 + 0.4 * Math.sin(p.t * 1.7));
+        const size = p.r * 8;
+        ctx.drawImage(sprite, p.x - size / 2, p.y - size / 2, size, size);
       }
+      ctx.globalAlpha = 1;
       raf = requestAnimationFrame(tick);
     };
 
+    const start = () => {
+      cancelAnimationFrame(raf);
+      if (visible && !document.hidden) raf = requestAnimationFrame(tick);
+    };
+
     resize();
-    tick();
+    start();
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
 
-    // Pause quand l'onglet est caché, pour économiser la batterie
-    const onVis = () => {
-      cancelAnimationFrame(raf);
-      if (!document.hidden) tick();
-    };
+    // Pause hors de l'écran ou quand l'onglet est caché, pour la fluidité et la batterie
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      start();
+    });
+    io.observe(canvas);
+    const onVis = () => start();
     document.addEventListener("visibilitychange", onVis);
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
       document.removeEventListener("visibilitychange", onVis);
     };
   }, [density, reduce]);

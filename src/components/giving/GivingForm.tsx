@@ -66,9 +66,9 @@ export function GivingForm({
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.p
               key={amount}
-              initial={{ y: 20, opacity: 0, filter: "blur(6px)" }}
-              animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-              exit={{ y: -20, opacity: 0, filter: "blur(6px)" }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
               transition={{ duration: 0.35 }}
               className="text-gold-sheen font-serif text-5xl font-semibold tabular-nums sm:text-6xl"
             >

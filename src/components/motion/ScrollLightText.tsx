@@ -6,9 +6,8 @@ import { motion, useScroll, useTransform, type MotionValue } from "motion/react"
 function Word({ word, progress, range }: { word: string; progress: MotionValue<number>; range: [number, number] }) {
   const opacity = useTransform(progress, range, [0.12, 1]);
   const color = useTransform(progress, range, ["#8b93b8", "#f8e7b5"]);
-  const textShadow = useTransform(progress, range, ["0 0 0px rgba(241,216,143,0)", "0 0 24px rgba(241,216,143,.55)"]);
   return (
-    <motion.span style={{ opacity, color, textShadow }} className="mr-[0.25em] inline-block">
+    <motion.span style={{ opacity, color }} className="mr-[0.25em] inline-block">
       {word}
     </motion.span>
   );

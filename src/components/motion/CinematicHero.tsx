@@ -16,8 +16,8 @@ export function CinematicHero({ src, alt, children }: { src: string; alt: string
       <motion.div style={{ y }} className="absolute inset-0">
         <motion.div
           className="absolute inset-0"
-          initial={{ scale: 1.25, filter: "blur(6px)" }}
-          animate={{ scale: 1.05, filter: "blur(0px)" }}
+          initial={{ scale: 1.25, opacity: 0.4 }}
+          animate={{ scale: 1.05, opacity: 1 }}
           transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
         >
           <motion.div

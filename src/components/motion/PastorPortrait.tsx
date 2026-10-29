@@ -25,8 +25,8 @@ export function PastorPortrait({ name }: { name: string }) {
         <LightParticles density={30} />
         <motion.div
           className="absolute inset-x-0 bottom-0 top-[8%]"
-          initial={{ y: "18%", opacity: 0, filter: "blur(10px)" }}
-          whileInView={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
+          initial={{ y: "18%", opacity: 0 }}
+          whileInView={{ y: "0%", opacity: 1 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
         >
