@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireRole, ROLE_LABELS } from "@/lib/dal";
+import { hasRole, requireRole, ROLE_LABELS } from "@/lib/dal";
 import { logout } from "@/actions/auth";
 import { LogoMark } from "@/components/layout/Logo";
 import { AdminNav } from "@/components/admin/AdminNav";
@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <span className="block text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gold-300">EBB Jésus Revient</span>
             </span>
           </Link>
-          <AdminNav isAdmin={user.role === "ADMIN"} />
+          <AdminNav isAdmin={user.role === "ADMIN"} isTreasurer={hasRole(user.role, "TRESORIER")} />
           <div className="mt-auto hidden space-y-3 border-t border-white/10 pt-4 lg:block">
             <p className="text-sm">
               <span className="block font-semibold">{user.firstName} {user.lastName}</span>

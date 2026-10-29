@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { saveService } from "@/actions/admin";
-import { FieldError, FormMessage, SubmitButton, kept, keptCheck } from "../forms/ui";
+import { FieldError, FormMessage, SubmitButton, kept, keptCheck, formKey } from "../forms/ui";
 import { DAYS } from "@/content/site";
 
 type Service = { id: string; name: string; description: string | null; dayOfWeek: number; weeks: number[]; ministryId: string | null; reminders: boolean; startTime: string; endTime: string | null; location: string; order: number };
@@ -15,7 +15,7 @@ export function ServiceForm({ service, ministries }: { service?: Service; minist
   }, [state, service]);
 
   return (
-    <form ref={ref} action={action} className="grid gap-3 sm:grid-cols-6">
+    <form key={formKey(state)} ref={ref} action={action} className="grid gap-3 sm:grid-cols-6">
       {service && <input type="hidden" name="id" value={service.id} />}
       <div className="sm:col-span-3">
         <label className="label">Nom</label>

@@ -26,6 +26,24 @@ Application web de l'église : site public en motion design, espace membre et ad
 - **Administration** : création des événements (programme, image, inscriptions), liste des inscrits et export Excel,
   envoi d'une notification à tous les abonnés, option « notifier » sur les annonces.
 
+## Phase 3 (livrée) : dîmes, offrandes et quêtes
+
+- **Faire un don** (`/donner`) : dîme, offrande, quête, action de grâce, construction, missions (types modifiables),
+  montants rapides, Mobile Money ou carte, don anonyme possible, page de confirmation animée et **reçu imprimable/PDF**.
+- **Paiement sécurisé** : un don n'est validé qu'après confirmation serveur du fournisseur (notification signée,
+  idempotente) ; référence publique non devinable.
+- **Espace membre** : « Mes dons » (total de l'année, historique, reçus).
+- **Trésorier** (`/admin/finances`) : totaux du jour, du mois, de l'année, graphiques par mois et par type,
+  saisie des quêtes et dîmes reçues en espèces, annulation tracée, liste filtrable, export Excel, journal complet.
+- **Confidentialité** : l'identité des donateurs de dîmes n'est visible que du trésorier.
+
+### Fournisseur de paiement
+
+Le module est indépendant du fournisseur (`src/lib/payments/`). `PAYMENT_PROVIDER="simulation"` permet de tout
+tester sans argent réel (refusé en production). L'intégration **SaaS Pay** se fait dans
+`src/lib/payments/saaspay.ts` (3 fonctions à compléter avec la documentation de l'API), puis `PAYMENT_PROVIDER="saaspay"`.
+URL de notification à déclarer chez le fournisseur : `https://<site>/api/paiements/notification/saaspay`.
+
 ## Démarrage
 
 Prérequis : Node.js 20.9+ et PostgreSQL.
@@ -70,6 +88,6 @@ sessions signées (JWT HS256 dans un cookie httpOnly), mots de passe hachés ave
 
 ## Prochaines phases
 
-3. Paiements SaaS Pay : dîmes, offrandes, quêtes, reçus
+3. Branchement de l'API SaaS Pay (documentation attendue)
 4. Collectes de solidarité, tableau de bord trésorier
 5. Lives : programmation, page en direct, archives

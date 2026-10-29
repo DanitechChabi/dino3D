@@ -66,6 +66,19 @@ async function main() {
     });
   }
 
+  // Types de dons (modifiables ensuite). Les dîmes sont confidentielles.
+  const giving = [
+    { slug: "dime", name: "Dîme", description: "« Apportez à la maison du trésor toutes les dîmes. » — Malachie 3:10", confidential: true },
+    { slug: "offrande", name: "Offrande", description: "Une offrande libre, pour soutenir l'œuvre de Dieu.", confidential: false },
+    { slug: "quete", name: "Quête du culte", description: "La quête recueillie pendant le culte.", confidential: false },
+    { slug: "action-de-graces", name: "Action de grâce", description: "Pour rendre grâce à Dieu pour un bienfait reçu.", confidential: false },
+    { slug: "construction", name: "Construction du temple", description: "Pour les travaux et l'équipement du lieu de culte.", confidential: false },
+    { slug: "missions", name: "Missions & évangélisation", description: "Pour porter l'Évangile à Tanmey et au-delà.", confidential: false },
+  ];
+  for (const [order, g] of giving.entries()) {
+    await db.givingCategory.upsert({ where: { slug: g.slug }, update: {}, create: { ...g, order } });
+  }
+
   // Événement réel passé, relié à son récit sur le blog
   await db.event.upsert({
     where: { slug: "conference-couple-2026" },

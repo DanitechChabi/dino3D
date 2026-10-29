@@ -31,6 +31,9 @@ model User {
   announcements     Announcement[]
   registrations     EventRegistration[]
   pushSubscriptions PushSubscription[]
+  donations         Donation[]          @relation("DonationDonor")
+  recordedDonations Donation[]          @relation("DonationRecorder")
+  financeLogs       FinanceLog[]
 }
 
 model Ministry {
@@ -158,4 +161,71 @@ model ReminderLog {
   key    String   @id
   sentAt DateTime @default(now())
   count  Int      @default(0)
+}
+
+// ——— Phase 3 : dîmes, offrandes et quêtes ———
+
+enum PaymentMethod {
+  MOBILE_MONEY
+  CARD
+  CASH
+  TRANSFER
+}
+
+enum DonationStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+model GivingCategory {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  name         String
+  description  String
+  // Confidentiel : l'identité des donateurs n'est visible que du trésorier (ex. dîmes)
+  confidential Boolean    @default(false)
+  active       Boolean    @default(true)
+  order        Int        @default(0)
+  donations    Donation[]
+}
+
+model Donation {
+  id           String         @id @default(cuid())
+  // Référence publique, non devinable (sert aussi de lien vers le reçu)
+  reference    String         @unique
+  categoryId   String
+  category     GivingCategory @relation(fields: [categoryId], references: [id])
+  amount       Int // en francs CFA (XOF)
+  currency     String         @default("XOF")
+  method       PaymentMethod
+  status       DonationStatus @default(PENDING)
+  userId       String?
+  user         User?          @relation("DonationDonor", fields: [userId], references: [id], onDelete: SetNull)
+  donorName    String?
+  donorPhone   String?
+  anonymous    Boolean        @default(false)
+  note         String?
+  provider     String? // « simulation », « saaspay »…
+  providerRef  String?
+  // Saisie manuelle (quête en espèces) : qui l'a enregistrée et pour quel culte
+  recordedById String?
+  recordedBy   User?          @relation("DonationRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+  serviceDate  DateTime?
+  createdAt    DateTime       @default(now())
+  paidAt       DateTime?
+
+  @@index([status, paidAt])
+  @@index([userId])
+}
+
+// Journal des opérations financières (traçabilité)
+model FinanceLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
 }

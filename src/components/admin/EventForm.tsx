@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { saveEvent } from "@/actions/admin";
-import { FieldError, FormMessage, SubmitButton, kept, keptCheck } from "../forms/ui";
+import { FieldError, FormMessage, SubmitButton, kept, keptCheck, formKey } from "../forms/ui";
 
 export type EventFormValues = {
   id: string;
@@ -38,7 +38,7 @@ export function EventForm({ event, categories, ministries, articles, photos }: P
   }, [state, event]);
 
   return (
-    <form ref={ref} action={action} className="grid gap-4 sm:grid-cols-6">
+    <form key={formKey(state)} ref={ref} action={action} className="grid gap-4 sm:grid-cols-6">
       {event && <input type="hidden" name="id" value={event.id} />}
       <div className="sm:col-span-4">
         <label className="label">Titre</label>

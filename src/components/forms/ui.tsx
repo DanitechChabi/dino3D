@@ -57,3 +57,12 @@ export function kept(state: FormState, name: string, fallback?: string | number 
 export function keptCheck(state: FormState, name: string, fallback?: boolean) {
   return state?.values ? state.values[name] === "on" : fallback;
 }
+
+/**
+ * Clé à poser sur un <form> qui contient des <select> : après une erreur, React réinitialise
+ * le formulaire et les listes déroulantes reviendraient à leur valeur d'origine. Changer de clé
+ * recrée le formulaire avec les valeurs saisies.
+ */
+export function formKey(state: FormState) {
+  return state?.values ? JSON.stringify(state.values) : "initial";
+}

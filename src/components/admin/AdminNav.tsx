@@ -3,24 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing } from "lucide-react";
+import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing, HandCoins } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/admin/evenements", label: "Événements", icon: CalendarHeart },
   { href: "/admin/annonces", label: "Annonces", icon: Megaphone },
   { href: "/admin/messages", label: "Messages & prières", icon: Mail },
+  { href: "/admin/finances", label: "Finances", icon: HandCoins, treasurer: true },
   { href: "/admin/membres", label: "Membres", icon: Users, adminOnly: true },
   { href: "/admin/cultes", label: "Cultes & horaires", icon: CalendarClock, adminOnly: true },
   { href: "/admin/notifications", label: "Notifications", icon: BellRing, adminOnly: true },
 ];
 
-export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
+export function AdminNav({ isAdmin, isTreasurer }: { isAdmin: boolean; isTreasurer: boolean }) {
   const pathname = usePathname();
   return (
     <nav className="-mx-1 flex gap-1 overflow-x-auto pb-1 lg:mx-0 lg:flex-col lg:overflow-visible">
       {items
-        .filter((i) => isAdmin || !i.adminOnly)
+        .filter((i) => (!i.adminOnly || isAdmin) && (!("treasurer" in i) || isTreasurer))
         .map(({ href, label, icon: Icon }) => {
           const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
           return (

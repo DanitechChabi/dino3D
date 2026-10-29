@@ -2,12 +2,12 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { runRemindersNow, sendBroadcast } from "@/actions/admin";
-import { FieldError, FormMessage, SubmitButton, kept } from "../forms/ui";
+import { FieldError, FormMessage, SubmitButton, kept, formKey } from "../forms/ui";
 
 export function BroadcastForm() {
   const [state, action] = useActionState(sendBroadcast, undefined);
   return (
-    <form action={action} className="space-y-4">
+    <form key={formKey(state)} action={action} className="space-y-4">
       <div>
         <label className="label">Destinataires</label>
         <select name="audience" className="field" defaultValue={kept(state, "audience", "news")}>

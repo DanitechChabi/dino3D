@@ -4,6 +4,7 @@ import { HandCoins, LogOut, Pin, Settings, Shield } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUser, hasRole, ROLE_LABELS } from "@/lib/dal";
 import { logout } from "@/actions/auth";
+import { formatXOF, METHOD_LABELS } from "@/lib/money";
 import { cancelRegistration } from "@/actions/events";
 import { NotifyButton } from "@/components/NotifyButton";
 import { DateBlock } from "@/components/events/DateBlock";
@@ -25,7 +26,8 @@ function Card({ title, children, dark = false }: { title: string; children: Reac
 
 export default async function MemberPage() {
   const me = await requireUser();
-  const [user, ministries, services, announcements, registrations] = await Promise.all([
+  const yearStart = new Date(`${new Date().getFullYear()}-01-01T00:00:00+01:00`);
+  const [user, ministries, services, announcements, registrations, donations, yearSum] = await Promise.all([
     db.user.findUniqueOrThrow({ where: { id: me.id }, include: { ministries: true } }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
     db.service.findMany({ where: { OR: [{ ministryId: null }, { ministry: { members: { some: { userId: me.id } } } }] }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
@@ -35,7 +37,10 @@ export default async function MemberPage() {
       include: { event: { select: { title: true, slug: true, startAt: true } } },
       orderBy: { event: { startAt: "asc" } },
     }),
+    db.donation.findMany({ where: { userId: me.id, status: "SUCCEEDED" }, orderBy: { paidAt: "desc" }, take: 8, include: { category: { select: { name: true } } } }),
+    db.donation.aggregate({ where: { userId: me.id, status: "SUCCEEDED", paidAt: { gte: yearStart } }, _sum: { amount: true } }),
   ]);
+  const yearTotal = yearSum._sum.amount ?? 0;
   const joined = new Set(user.ministries.map((m) => m.ministryId));
 
   return (
@@ -149,10 +154,29 @@ export default async function MemberPage() {
                 </Card>
               </Reveal>
               <Reveal>
-                <div className="rounded-3xl border border-dashed border-gold-500/40 bg-parchment p-6">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-600">Bientôt disponible</p>
-                  <p className="mt-3 flex items-center gap-2 text-sm text-night-800"><HandCoins className="size-4 text-gold-600" /> Dîmes, offrandes et historique de mes dons</p>
-                </div>
+                <Card title="Mes dons">
+                  <p className="text-sm text-night-800/60">Total {new Date().getFullYear()}</p>
+                  <p className="text-gold-sheen font-serif text-4xl font-semibold">{formatXOF(yearTotal)}</p>
+                  {donations.length > 0 && (
+                    <ul className="mt-4 divide-y divide-night-900/5">
+                      {donations.map((d) => (
+                        <li key={d.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                          <span>
+                            <span className="block font-semibold text-night-900">{d.category.name}</span>
+                            <span className="text-xs text-night-800/60">{(d.paidAt ?? d.createdAt).toLocaleDateString("fr-FR")} · {METHOD_LABELS[d.method]}</span>
+                          </span>
+                          <span className="text-right">
+                            <span className="block font-bold text-night-900">{formatXOF(d.amount)}</span>
+                            {d.method !== "CASH" && <a href={`/recu/${d.reference}`} target="_blank" className="text-xs font-bold text-gold-600">Reçu</a>}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <Link href="/donner" className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-5 py-2.5 text-sm font-bold text-night-950">
+                    <HandCoins className="size-4" /> Faire un don
+                  </Link>
+                </Card>
               </Reveal>
             </div>
           </div>
