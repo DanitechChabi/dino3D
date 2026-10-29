@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { Reveal } from "@/components/motion/Reveal";
@@ -72,8 +73,15 @@ export default async function AboutPage() {
             {team.map((t, i) => (
               <Reveal key={i} delay={i * 0.08}>
                 <TiltCard className="rounded-3xl border border-night-900/10 bg-white p-4 text-center">
-                  <div className="grid aspect-square place-items-center rounded-2xl bg-gradient-to-b from-night-700 to-night-950">
-                    <CrossGlyph className="h-20 w-auto opacity-80" delay={0.2 + i * 0.2} />
+                  <div className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl bg-gradient-to-b from-night-700 to-night-950">
+                    {t.photo ? (
+                      <>
+                        <div className="absolute left-1/2 top-1/3 size-40 -translate-x-1/2 rounded-full bg-gold-300/30 blur-2xl" />
+                        <Image src={t.photo} alt={t.name} fill sizes="(max-width: 640px) 90vw, 25vw" className="object-cover object-top transition-transform duration-700 group-hover:scale-105" />
+                      </>
+                    ) : (
+                      <CrossGlyph className="h-20 w-auto opacity-80" delay={0.2 + i * 0.2} />
+                    )}
                   </div>
                   <h3 className="mt-4 font-serif text-xl font-semibold text-night-900">{t.name}</h3>
                   <p className="mb-2 text-sm text-gold-600">{t.role}</p>

@@ -11,7 +11,10 @@ import { Countdown } from "@/components/motion/Countdown";
 import { ScrollDove } from "@/components/motion/ScrollDove";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
-import { AnimatedLogo } from "@/components/motion/AnimatedLogo";
+import { PastorPortrait } from "@/components/motion/PastorPortrait";
+import { PhotoMarquee } from "@/components/gallery/PhotoMarquee";
+import { sortedActivities, formatActivityDate } from "@/content/activities";
+import Image from "next/image";
 import { Lamp } from "@/components/motion/Lamp";
 import { LightParticles } from "@/components/motion/LightParticles";
 import { SectionTitle } from "@/components/layout/SectionTitle";
@@ -32,18 +35,7 @@ export default async function HomePage() {
       {/* Mot de bienvenue */}
       <section id="bienvenue" className="relative scroll-mt-20 overflow-hidden bg-ivory py-24 sm:py-32">
         <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <Reveal className="relative mx-auto w-full max-w-sm">
-            <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-gold-300/50 to-transparent blur-2xl" />
-            <div className="relative aspect-[4/5] overflow-hidden rounded-t-full rounded-b-[2rem] border border-gold-400/40 bg-gradient-to-b from-night-700 to-night-950 p-3 shadow-2xl">
-              <div className="grid h-full place-items-center rounded-t-full rounded-b-[1.5rem] border border-gold-300/30 bg-[radial-gradient(circle_at_50%_30%,rgba(241,216,143,.25),transparent_60%)]">
-                <div className="text-center">
-                  {/* À remplacer par la photo du pasteur */}
-                  <AnimatedLogo className="mx-auto size-52 sm:size-60" delay={0.2} />
-                  <p className="mt-6 px-6 text-xs uppercase tracking-[0.2em] text-gold-200/70">Photo du pasteur à venir</p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
+          <PastorPortrait name={church.pastor.name} />
           <div>
             <SectionTitle eyebrow="Mot de bienvenue" title="Une famille qui vous attend" />
             <Reveal delay={0.1}>
@@ -136,6 +128,41 @@ export default async function HomePage() {
       </section>
 
       <VerseMarquee />
+
+      {/* La vie de l'église en images */}
+      <section className="overflow-hidden bg-ivory py-24 sm:py-32">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionTitle eyebrow="La vie de l'église" title="Nos dernières activités" />
+            <Link href="/blog" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+              Tout le blog <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {sortedActivities.slice(0, 2).map((a, i) => (
+              <Reveal key={a.slug} delay={i * 0.1}>
+                <Link href={`/blog/${a.slug}`} className="group relative block aspect-[4/3] overflow-hidden rounded-[2rem] bg-night-950">
+                  <Image src={a.photos[a.cover].src} alt={a.photos[a.cover].caption} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition-transform duration-[2s] group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/30 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-300">
+                      {a.category}
+                      {a.date && <span className="normal-case tracking-normal"> · {formatActivityDate(a.date)}</span>}
+                    </p>
+                    <h3 className="mt-2 font-serif text-2xl font-semibold leading-tight text-white sm:text-3xl">{a.title}</h3>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-gold-200">
+                      Lire le récit <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+        <div className="mt-14">
+          <PhotoMarquee photos={sortedActivities.flatMap((a) => a.photos).slice(0, 16)} href="/galerie" />
+        </div>
+      </section>
 
       {/* Annonces */}
       {announcements.length > 0 && (

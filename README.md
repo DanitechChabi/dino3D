@@ -6,7 +6,8 @@ Application web de l'église : site public en motion design, espace membre et ad
 
 - **Site public** : accueil animé (croix de lumière, nuées qui s'écartent au défilement, Évangile en 4 actes,
   colombe, lampes à huile, compte à rebours avant le prochain culte), À propos (histoire, vision, confession de foi,
-  équipe), Cultes & première visite, Ministères, Annonces, Galerie, Contact & demande de prière.
+  équipe), Cultes & première visite, Ministères, Annonces, Blog (récits d'activités), Galerie (albums,
+  visionneuse plein écran), Contact & demande de prière.
 - **Écran d'ouverture** : une colombe traverse la nuit puis le logo EBB‑JR se dévoile (une fois par visite, cliquable pour passer).
 - **Comptes membres** : inscription / connexion par numéro de téléphone + mot de passe, profil, ministères, mot de passe.
 - **Rôles** : Membre, Responsable de ministère, Trésorier, Pasteur / Administrateur.
@@ -35,7 +36,7 @@ Connexion administrateur : le numéro `SEED_ADMIN_PHONE` et le mot de passe `SEE
 |---|---|
 | Nom, adresse, téléphone, WhatsApp, e-mail, carte, mot du pasteur | `src/content/site.ts` (`church`) |
 | Histoire, vision, confession de foi, équipe, FAQ, versets | `src/content/site.ts` |
-| Photos de la galerie | déposer dans `public/galerie/` et renseigner `gallery` dans `src/content/site.ts` |
+| Activités (articles du blog + albums photo) | photos dans `public/galerie/<activité>/`, texte et légendes dans `src/content/activities.ts` |
 | Logo | `public/brand/` |
 | Horaires des cultes, annonces, rôles des membres | depuis l'administration (`/admin`) |
 

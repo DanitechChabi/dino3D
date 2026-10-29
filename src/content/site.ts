@@ -90,8 +90,8 @@ export const confession = [
   { title: "Le retour de Christ", text: "Jésus-Christ reviendra personnellement et visiblement chercher les siens. Nous L'attendons chaque jour.", ref: "Jean 14:3" },
 ];
 
-export const team = [
-  { name: "CHABI BOUKO Youssouf", role: "Pasteur principal et fondateur" },
+export const team: { name: string; role: string; photo?: string }[] = [
+  { name: "CHABI BOUKO Youssouf", role: "Pasteur principal et fondateur", photo: "/brand/pasteur-chabi-bouko-youssouf.png" },
   { name: "Nom à compléter", role: "Pasteur adjoint / Ancien" },
   { name: "Nom à compléter", role: "Diacre" },
   { name: "Nom à compléter", role: "Responsable de la louange" },
@@ -111,21 +111,9 @@ export const nav = [
   { href: "/cultes", label: "Cultes" },
   { href: "/ministeres", label: "Ministères" },
   { href: "/annonces", label: "Annonces" },
+  { href: "/blog", label: "Blog" },
   { href: "/galerie", label: "Galerie" },
   { href: "/contact", label: "Contact" },
 ];
 
 export const DAYS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-
-// Galerie : déposer les photos dans /public/galerie et renseigner « src » (ex. "/galerie/culte-1.jpg").
-export const gallery: { src?: string; title: string; category: string }[] = [
-  { title: "Culte du dimanche", category: "Cultes" },
-  { title: "La chorale", category: "Louange" },
-  { title: "Baptêmes", category: "Événements" },
-  { title: "École du dimanche", category: "Enfants" },
-  { title: "Réunion de prière", category: "Cultes" },
-  { title: "Sortie d'évangélisation", category: "Évangélisation" },
-  { title: "Convention annuelle", category: "Événements" },
-  { title: "Groupe de jeunesse", category: "Jeunesse" },
-  { title: "Sainte Cène", category: "Cultes" },
-];

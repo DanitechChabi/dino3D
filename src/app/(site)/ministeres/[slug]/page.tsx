@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { AlbumCard } from "@/components/gallery/AlbumCard";
+import { sortedActivities } from "@/content/activities";
 
 export async function generateMetadata(props: PageProps<"/ministeres/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;
@@ -20,6 +22,7 @@ export default async function MinistryPage(props: PageProps<"/ministeres/[slug]"
     include: { members: { where: { isLeader: true }, include: { user: { select: { firstName: true, lastName: true } } } } },
   });
   if (!ministry) notFound();
+  const related = sortedActivities.filter((a) => a.ministry === ministry.slug);
 
   return (
     <>
@@ -46,6 +49,16 @@ export default async function MinistryPage(props: PageProps<"/ministeres/[slug]"
             </Link>
           </Reveal>
         </div>
+        {related.length > 0 && (
+          <div className="mx-auto mt-20 max-w-6xl px-8 sm:px-12">
+            <h2 className="mb-10 font-serif text-3xl font-semibold text-night-900">Nos activités</h2>
+            <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((a) => (
+                <AlbumCard key={a.slug} activity={a} href={`/blog/${a.slug}`} />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </>
   );
