@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
 import { AlbumCard } from "@/components/gallery/AlbumCard";
-import { sortedActivities } from "@/content/activities";
+import { getActivities } from "@/lib/content";
 
 export const metadata: Metadata = { title: "Galerie" };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const sortedActivities = await getActivities();
   const total = sortedActivities.reduce((n, a) => n + a.photos.length, 0);
   return (
     <>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { motion } from "motion/react";
-import { login, register } from "@/actions/auth";
+import { login, register, setNewPassword } from "@/actions/auth";
 import { FieldError, FormMessage, SubmitButton, kept } from "./ui";
 
 const stagger = {
@@ -31,6 +31,7 @@ export function LoginForm({ next }: { next?: string }) {
         <label className="label" htmlFor="password">Mot de passe</label>
         <input id="password" name="password" type="password" className="field" autoComplete="current-password" required />
         <FieldError state={state} name="password" />
+        <Link href="/mot-de-passe-oublie" className="mt-2 inline-block text-sm font-semibold text-gold-600">Mot de passe oublié ?</Link>
       </motion.div>
       <motion.div {...item} className="space-y-4">
         <FormMessage state={state} />
@@ -91,6 +92,31 @@ export function RegisterForm() {
         <p className="text-center text-sm text-night-800/70">
           Déjà membre ? <Link href="/connexion" className="font-bold text-gold-600">Se connecter</Link>
         </p>
+      </motion.div>
+    </motion.form>
+  );
+}
+
+export function NewPasswordForm({ firstName }: { firstName: string }) {
+  const [state, action] = useActionState(setNewPassword, undefined);
+  return (
+    <motion.form action={action} className="space-y-5" {...stagger}>
+      <motion.div {...item}>
+        <h1 className="font-serif text-4xl font-semibold text-night-900">Bonjour {firstName}</h1>
+        <p className="mt-2 text-night-800/70">Votre mot de passe a été réinitialisé. Choisissez-en un nouveau, que vous seul connaîtrez.</p>
+      </motion.div>
+      <motion.div {...item}>
+        <label className="label" htmlFor="password">Nouveau mot de passe</label>
+        <input id="password" name="password" type="password" className="field" autoComplete="new-password" required minLength={8} />
+        <FieldError state={state} name="password" />
+      </motion.div>
+      <motion.div {...item}>
+        <label className="label" htmlFor="confirm">Confirmation</label>
+        <input id="confirm" name="confirm" type="password" className="field" autoComplete="new-password" required />
+        <FieldError state={state} name="confirm" />
+      </motion.div>
+      <motion.div {...item}>
+        <SubmitButton className="w-full">Enregistrer</SubmitButton>
       </motion.div>
     </motion.form>
   );

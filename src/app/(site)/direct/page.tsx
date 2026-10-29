@@ -4,7 +4,7 @@ import { ArrowRight, CalendarDays, HandHeart, Radio } from "lucide-react";
 import { db } from "@/lib/db";
 import { currentLive, nextLive } from "@/lib/lives";
 import { formatDay, formatTime } from "@/lib/time";
-import { church } from "@/content/site";
+import { getSettings } from "@/lib/settings";
 import { LightParticles } from "@/components/motion/LightParticles";
 import { Reveal } from "@/components/motion/Reveal";
 import { VideoPlayer } from "@/components/live/VideoPlayer";
@@ -17,6 +17,7 @@ import { YoutubeIcon } from "@/components/YoutubeIcon";
 export const metadata: Metadata = { title: "En direct", description: "Suivez les cultes de l'EBB-JR de Tanmey en direct." };
 
 export default async function LivePage() {
+  const { youtube } = await getSettings();
   const [live, next, recent] = await Promise.all([
     currentLive(),
     nextLive(),
@@ -63,9 +64,9 @@ export default async function LivePage() {
               <div className="mx-auto mt-8 max-w-md"><NotifyButton dark /></div>
             </div>
           )}
-          {church.socials.youtube && (
+          {youtube && (
             <p className="mt-8 text-center">
-              <a href={church.socials.youtube} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white">
+              <a href={youtube} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white">
                 <YoutubeIcon className="size-5 text-[#FF0000]" /> Notre chaîne YouTube
               </a>
             </p>

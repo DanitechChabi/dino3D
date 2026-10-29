@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing, HandCoins, HeartHandshake, Radio } from "lucide-react";
+import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing, HandCoins, HeartHandshake, Radio, Images, Settings2 } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/admin/evenements", label: "Événements", icon: CalendarHeart },
   { href: "/admin/lives", label: "Lives & prédications", icon: Radio },
+  { href: "/admin/blog", label: "Blog & albums", icon: Images },
   { href: "/admin/annonces", label: "Annonces", icon: Megaphone },
   { href: "/admin/messages", label: "Messages & prières", icon: Mail },
   { href: "/admin/finances", label: "Finances", icon: HandCoins, treasurer: true },
@@ -16,6 +17,7 @@ const items = [
   { href: "/admin/membres", label: "Membres", icon: Users, adminOnly: true },
   { href: "/admin/cultes", label: "Cultes & horaires", icon: CalendarClock, adminOnly: true },
   { href: "/admin/notifications", label: "Notifications", icon: BellRing, adminOnly: true },
+  { href: "/admin/parametres", label: "Paramètres", icon: Settings2, adminOnly: true },
 ];
 
 export function AdminNav({ isAdmin, isTreasurer }: { isAdmin: boolean; isTreasurer: boolean }) {

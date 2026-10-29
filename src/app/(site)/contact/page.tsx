@@ -3,6 +3,8 @@ import { MapPin, Phone, Mail, MessageCircle, Headset } from "lucide-react";
 import { YoutubeIcon } from "@/components/YoutubeIcon";
 import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 import { church } from "@/content/site";
+import { getSettings, mapDirections, mapEmbed } from "@/lib/settings";
+import { FacebookIcon } from "@/components/FacebookIcon";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
 import { ContactForm } from "@/components/forms/ContactForm";
@@ -14,8 +16,11 @@ export default async function ContactPage(props: PageProps<"/contact">) {
   const prayer = sp.priere === "1";
   const subject = typeof sp.sujet === "string" ? sp.sujet.slice(0, 150) : undefined;
 
+  const settings = await getSettings();
+  const embed = mapEmbed(settings);
+  const directions = mapDirections(settings);
   const infos = [
-    { icon: MapPin, label: "Adresse", value: church.address },
+    { icon: MapPin, label: "Adresse", value: settings.address, href: directions ?? undefined },
     { icon: Phone, label: "Téléphone", value: church.phone, href: `tel:${church.phone.replace(/\s/g, "")}` },
     { icon: Headset, label: "Assistance", value: church.assistancePhone, href: `tel:${church.assistancePhone.replace(/\s/g, "")}` },
     { icon: Mail, label: "E-mail", value: church.email, href: `mailto:${church.email}` },
@@ -41,9 +46,9 @@ export default async function ContactPage(props: PageProps<"/contact">) {
               </div>
             ))}
             <WhatsappChannelButton className="w-full" />
-            {church.socials.youtube && (
+            {settings.youtube && (
               <a
-                href={church.socials.youtube}
+                href={settings.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-full bg-[#FF0000] px-6 py-3 font-bold text-white transition hover:brightness-110"
@@ -51,9 +56,19 @@ export default async function ContactPage(props: PageProps<"/contact">) {
                 <YoutubeIcon className="size-5" /> Notre chaîne YouTube
               </a>
             )}
-            {church.whatsapp && (
+            {settings.facebook && (
               <a
-                href={`https://wa.me/${church.whatsapp}`}
+                href={settings.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-full bg-[#1877F2] px-6 py-3 font-bold text-white transition hover:brightness-110"
+              >
+                <FacebookIcon className="size-5" /> Notre page Facebook
+              </a>
+            )}
+            {settings.whatsapp && (
+              <a
+                href={`https://wa.me/${settings.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-bold text-white transition hover:brightness-105"
@@ -62,8 +77,13 @@ export default async function ContactPage(props: PageProps<"/contact">) {
               </a>
             )}
             <div className="overflow-hidden rounded-3xl border border-night-900/10 bg-night-950">
-              {church.mapEmbedUrl ? (
-                <iframe src={church.mapEmbedUrl} title="Carte" className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              {embed ? (
+                <>
+                  <iframe src={embed} title="Carte de localisation de l'église" className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  <a href={directions!} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 py-3 text-sm font-bold text-gold-200 hover:text-white">
+                    <MapPin className="size-4" /> Itinéraire jusqu&apos;à l&apos;église
+                  </a>
+                </>
               ) : (
                 <div className="grid h-64 place-items-center p-6 text-center text-sm text-white/60">
                   <div>

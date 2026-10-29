@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CalendarDays, Clock, MapPin } from "lucide-react";
-import { activities, sortedActivities, getActivity, formatActivityDate, wallPhotos } from "@/content/activities";
+import { activities, formatActivityDate, wallPhotos } from "@/content/activities";
+import { findActivity, getActivities } from "@/lib/content";
 import { CinematicHero } from "@/components/motion/CinematicHero";
 import { ReadingProgress } from "@/components/motion/ReadingProgress";
 import { SplitWords } from "@/components/motion/SplitWords";
@@ -17,16 +18,17 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata(props: PageProps<"/blog/[slug]">): Promise<Metadata> {
-  const a = getActivity((await props.params).slug);
+  const a = await findActivity((await props.params).slug);
   if (!a) return {};
   const cover = a.photos[a.cover];
   return { title: a.title, description: a.excerpt, openGraph: { title: a.title, description: a.excerpt, images: [cover.src] } };
 }
 
 export default async function ArticlePage(props: PageProps<"/blog/[slug]">) {
-  const article = getActivity((await props.params).slug);
+  const article = await findActivity((await props.params).slug);
   if (!article) notFound();
   const cover = article.photos[article.cover];
+  const sortedActivities = await getActivities();
   const idx = sortedActivities.findIndex((a) => a.slug === article.slug);
   const newer = sortedActivities[idx - 1];
   const older = sortedActivities[idx + 1];

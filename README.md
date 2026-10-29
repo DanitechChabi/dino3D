@@ -67,6 +67,18 @@ URL de notification à déclarer chez le fournisseur : `https://<site>/api/paiem
   page de prédication avec la même série ; ajout manuel de prédications passées ; dernière prédication sur l'accueil.
 - **Lecteur léger** : la vidéo (YouTube sans cookies publicitaires) ne se charge qu'au clic.
 
+## Phase 6 (livrée) : autonomie
+
+- **Mots de passe** : l'administrateur réinitialise le mot de passe d'un membre (mot de passe temporaire à changer
+  à la première connexion) ; page « Mot de passe oublié » avec les numéros d'assistance.
+- **Blog et albums** (`/admin/blog`) : un récit se crée depuis un téléphone, photos envoyées en lot (réduites dans le
+  navigateur puis retouchées sur le serveur : lumière, couleurs, netteté), légendes, couverture, ordre. Un récit publié
+  apparaît sur le blog, dans la galerie et sur la page du ministère concerné.
+- **Paramètres** (`/admin/parametres`) : adresse, position sur la carte (coordonnées GPS), WhatsApp, Facebook, YouTube.
+- **Anniversaires** : les anniversaires des deux prochaines semaines sur le tableau de bord (vœux en un clic sur
+  WhatsApp) et un message de bénédiction dans l'espace du membre le jour J.
+- **Référencement** : plan du site, robots.txt et image d'aperçu pour les partages (WhatsApp, Facebook).
+
 ## Démarrage
 
 Prérequis : Node.js 20.9+ et PostgreSQL.
@@ -96,9 +108,11 @@ Les SMS et WhatsApp pourront être branchés dans `src/lib/notify.ts` une fois u
 
 | Contenu | Où |
 |---|---|
-| Nom, adresse, téléphone, WhatsApp, e-mail, carte, mot du pasteur | `src/content/site.ts` (`church`) |
+| Adresse, carte, WhatsApp, Facebook, YouTube | Administration → Paramètres |
+| Nom, téléphones, e-mail, mot du pasteur | `src/content/site.ts` (`church`) |
 | Histoire, vision, confession de foi, équipe, FAQ, versets | `src/content/site.ts` |
-| Activités (articles du blog + albums photo) | photos dans `public/galerie/<activité>/`, texte et légendes dans `src/content/activities.ts` |
+| Nouveaux récits et albums photo | Administration → Blog & albums |
+| Activités déjà intégrées au code | photos dans `public/galerie/<activité>/`, texte dans `src/content/activities.ts` |
 | Logo | `public/brand/` |
 | Horaires des cultes, annonces, rôles des membres | depuis l'administration (`/admin`) |
 

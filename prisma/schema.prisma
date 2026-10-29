@@ -25,6 +25,8 @@ model User {
   passwordHash       String
   role               Role                @default(MEMBRE)
   active             Boolean             @default(true)
+  // Mot de passe temporaire donné par l\'administrateur : à changer à la connexion
+  mustChangePassword Boolean             @default(false)
   birthDate          DateTime?
   baptismDate        DateTime?
   createdAt          DateTime            @default(now())
@@ -39,6 +41,7 @@ model User {
   solidarityRequests SolidarityCase[]    @relation("SolidarityRequester")
   solidarityReviews  SolidarityCase[]    @relation("SolidarityReviewer")
   solidarityPayouts  SolidarityPayout[]
+  media              Media[]
 }
 
 model Ministry {
@@ -327,4 +330,60 @@ model Livestream {
   updatedAt   DateTime     @updatedAt
 
   @@index([status, scheduledAt])
+}
+
+// ——— Phase 6 : autonomie (photos, articles, paramètres) ———
+
+// Photo envoyée depuis l'administration (retouchée et stockée en base, servie par /media/<id>)
+model Media {
+  id           String      @id @default(cuid())
+  mime         String
+  width        Int
+  height       Int
+  size         Int
+  data         Bytes
+  uploadedById String?
+  uploadedBy   User?       @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime    @default(now())
+  postPhotos   PostPhoto[]
+}
+
+// Article du blog = album de la galerie (comme les activités écrites dans le code)
+model Post {
+  id        String      @id @default(cuid())
+  slug      String      @unique
+  title     String
+  category  String
+  date      DateTime?
+  time      String?
+  place     String?
+  excerpt   String
+  body      String
+  verseText String?
+  verseRef  String?
+  ministry  String? // slug du ministère concerné
+  coverId   String?
+  published Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  photos    PostPhoto[]
+}
+
+model PostPhoto {
+  id      String @id @default(cuid())
+  postId  String
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  mediaId String
+  media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  caption String @default("")
+  order   Int    @default(0)
+
+  @@index([postId, order])
+}
+
+// Paramètres de l'église modifiables depuis l'administration (adresse, WhatsApp…)
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }

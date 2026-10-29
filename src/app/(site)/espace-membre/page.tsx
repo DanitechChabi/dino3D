@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HandCoins, LogOut, Pin, Settings, Shield } from "lucide-react";
+import { Cake, HandCoins, LogOut, Pin, Settings, Shield } from "lucide-react";
+import { isBirthdayToday } from "@/lib/birthdays";
 import { db } from "@/lib/db";
 import { requireUser, hasRole, ROLE_LABELS } from "@/lib/dal";
 import { logout } from "@/actions/auth";
@@ -60,6 +61,18 @@ export default async function MemberPage() {
               </button>
             </form>
           </Reveal>
+
+          {isBirthdayToday(user.birthDate) && (
+            <Reveal className="mb-8">
+              <div className="relative overflow-hidden rounded-3xl bg-night-950 p-7 text-white sm:p-9">
+                <div className="pointer-events-none absolute -right-10 -top-10 size-48 rounded-full bg-gold-400/25 blur-3xl" />
+                <Cake className="size-9 text-gold-300" />
+                <p className="mt-4 font-serif text-3xl font-semibold sm:text-4xl">Joyeux anniversaire, {user.firstName} !</p>
+                <p className="mt-3 max-w-2xl text-white/75">« Que l&apos;Éternel te bénisse et qu&apos;il te garde ! Que l&apos;Éternel fasse luire sa face sur toi et qu&apos;il t&apos;accorde sa grâce ! » — Nombres 6:24-25</p>
+                <p className="mt-3 text-sm text-gold-200">Toute la famille de l&apos;EBB‑JR de Tanmey se réjouit avec vous.</p>
+              </div>
+            </Reveal>
+          )}
 
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">

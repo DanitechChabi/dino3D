@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Users, UserPlus, Mail, HeartHandshake, HandHelping } from "lucide-react";
+import { Users, UserPlus, Mail, HeartHandshake, HandHelping, Cake } from "lucide-react";
+import { upcomingBirthdays, wishLink } from "@/lib/birthdays";
+import { WhatsappIcon } from "@/components/WhatsappIcon";
 import { db } from "@/lib/db";
 import { hasRole, requireRole } from "@/lib/dal";
 import { AdminTitle, Panel } from "@/components/admin/ui";
@@ -17,13 +19,14 @@ export default async function AdminHome() {
   monthStart.setHours(0, 0, 0, 0);
   const visibleMessages = isAdmin ? {} : { isPrayer: false };
 
-  const [members, newMembers, unread, prayers, latestMembers, latestMessages] = await Promise.all([
+  const [members, newMembers, unread, prayers, latestMembers, latestMessages, birthdays] = await Promise.all([
     db.user.count({ where: { active: true } }),
     db.user.count({ where: { createdAt: { gte: monthStart } } }),
     db.contactMessage.count({ where: { handled: false, ...visibleMessages } }),
     isAdmin ? db.contactMessage.count({ where: { handled: false, isPrayer: true } }) : Promise.resolve(0),
     db.user.findMany({ orderBy: { createdAt: "desc" }, take: 5, select: { id: true, firstName: true, lastName: true, createdAt: true } }),
     db.contactMessage.findMany({ where: visibleMessages, orderBy: { createdAt: "desc" }, take: 5 }),
+    upcomingBirthdays(14),
   ]);
 
   const pendingHelp = hasRole(user.role, "TRESORIER") ? await db.solidarityCase.count({ where: { status: "PROPOSED" } }) : 0;
@@ -51,6 +54,32 @@ export default async function AdminHome() {
         ))}
       </div>
       <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <Panel className="xl:col-span-2">
+          <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl font-semibold text-night-900"><Cake className="size-6 text-gold-600" /> Anniversaires des deux prochaines semaines</h2>
+          {birthdays.length === 0 ? (
+            <p className="text-sm text-night-800/60">Aucun anniversaire prochainement. Les membres renseignent leur date de naissance dans leur espace.</p>
+          ) : (
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {birthdays.map((b) => (
+                <li key={b.id} className={`flex items-center gap-3 rounded-2xl border p-3 ${b.inDays === 0 ? "border-gold-400 bg-gold-300/15" : "border-night-900/10"}`}>
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-night-950 text-center leading-none text-gold-200">
+                    <span>
+                      <span className="block font-serif text-xl">{b.next.getUTCDate()}</span>
+                      <span className="text-[10px] uppercase">{b.next.toLocaleDateString("fr-FR", { month: "short", timeZone: "UTC" })}</span>
+                    </span>
+                  </span>
+                  <span className="min-w-0 flex-1 text-sm">
+                    <span className="block truncate font-semibold text-night-900">{b.firstName} {b.lastName}</span>
+                    <span className="text-night-800/60">{b.inDays === 0 ? "Aujourd'hui" : b.inDays === 1 ? "Demain" : `Dans ${b.inDays} jours`} · {b.age} ans</span>
+                  </span>
+                  <a href={wishLink(b.phone, b.firstName)} target="_blank" rel="noopener noreferrer" title="Souhaiter sur WhatsApp" aria-label={`Souhaiter l'anniversaire de ${b.firstName} sur WhatsApp`} className="grid size-9 shrink-0 place-items-center rounded-full bg-[#25D366] text-white">
+                    <WhatsappIcon className="size-4" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
         <Panel>
           <h2 className="mb-4 font-serif text-2xl font-semibold text-night-900">Derniers inscrits</h2>
           <ul className="divide-y divide-night-900/5">

@@ -6,7 +6,8 @@ export const church = {
   shortName: "EBB Jésus Revient",
   city: "Tanmey",
   tagline: "Jésus revient — préparez-vous à Sa rencontre",
-  address: "Tanmey — adresse exacte à compléter", // À COMPLÉTER
+  // Adresse, carte, WhatsApp et réseaux : modifiables dans Administration → Paramètres
+  address: "Tanmey — adresse exacte à compléter",
   phone: "01 97 60 97 49",
   assistancePhone: "01 53 73 62 65",
   whatsapp: "", // À COMPLÉTER : numéro au format international sans « + », ex. 22900000000
@@ -22,7 +23,6 @@ export const church = {
   foundedYear: 2000,
   founder: "Pasteur CHABI BOUKO Youssouf",
   activeMembers: 100, // « une centaine de membres actifs »
-  mapEmbedUrl: "", // À COMPLÉTER : lien « Intégrer une carte » de Google Maps
   pastor: {
     name: "Pasteur CHABI BOUKO Youssouf",
     title: "Pasteur principal et fondateur",

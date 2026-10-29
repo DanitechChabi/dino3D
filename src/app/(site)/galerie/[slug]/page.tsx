@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, BookOpen } from "lucide-react";
-import { activities, getActivity, formatActivityDate, wallPhotos } from "@/content/activities";
+import { activities, formatActivityDate, wallPhotos } from "@/content/activities";
+import { findActivity } from "@/lib/content";
 import { CinematicHero } from "@/components/motion/CinematicHero";
 import { SplitWords } from "@/components/motion/SplitWords";
 import { Reveal } from "@/components/motion/Reveal";
@@ -14,12 +15,12 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata(props: PageProps<"/galerie/[slug]">): Promise<Metadata> {
-  const a = getActivity((await props.params).slug);
+  const a = await findActivity((await props.params).slug);
   return a ? { title: `${a.title} — photos`, description: a.excerpt } : {};
 }
 
 export default async function AlbumPage(props: PageProps<"/galerie/[slug]">) {
-  const album = getActivity((await props.params).slug);
+  const album = await findActivity((await props.params).slug);
   if (!album) notFound();
   const cover = album.photos[album.cover];
 

@@ -1,8 +1,9 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
+import { KeyRound } from "lucide-react";
 import type { Role } from "@prisma/client";
-import { setUserActive, setUserRole } from "@/actions/admin";
+import { resetUserPassword, setUserActive, setUserRole } from "@/actions/admin";
 
 type Props = {
   isSelf: boolean;
@@ -12,6 +13,7 @@ type Props = {
 
 export function MemberRow({ user, roles, isSelf }: Props) {
   const [pending, start] = useTransition();
+  const [temp, setTemp] = useState<string | null>(null);
   return (
     <tr className={`${pending ? "opacity-50" : ""} ${user.active ? "" : "bg-night-900/[0.03] text-night-800/50"}`}>
       <td className="p-4">
@@ -40,6 +42,22 @@ export function MemberRow({ user, roles, isSelf }: Props) {
         >
           {user.active ? "Actif" : "Désactivé"}
         </button>
+      </td>
+      <td className="p-4">
+        {temp ? (
+          <span className="block rounded-lg bg-gold-300/30 px-2 py-1 text-xs">
+            Mot de passe temporaire : <strong className="font-mono text-sm text-night-950">{temp}</strong>
+            <span className="block text-night-800/60">À transmettre au membre (affiché une seule fois)</span>
+          </span>
+        ) : (
+          <button
+            disabled={isSelf || pending}
+            onClick={() => confirm(`Réinitialiser le mot de passe de ${user.name} ?`) && start(async () => setTemp(await resetUserPassword(user.id)))}
+            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold text-night-800 hover:bg-night-900/5 disabled:opacity-40"
+          >
+            <KeyRound className="size-3.5" /> Réinitialiser
+          </button>
+        )}
       </td>
     </tr>
   );

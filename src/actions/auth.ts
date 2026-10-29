@@ -5,7 +5,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { createSession, deleteSession } from "@/lib/session";
-import { hasRole } from "@/lib/dal";
+import { getCurrentUser, hasRole } from "@/lib/dal";
 import { tooManyAttempts, resetAttempts } from "@/lib/rate-limit";
 import { phoneSchema, passwordSchema, keepValues, type FormState } from "@/lib/validation";
 
@@ -57,6 +57,7 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
 
   resetAttempts(`login:${phone}`);
   await createSession({ userId: user.id, role: user.role });
+  if (user.mustChangePassword) redirect("/changer-mot-de-passe");
   const next = safeNext(suite);
   if (next?.startsWith("/admin") && !hasRole(user.role, "RESPONSABLE")) redirect("/espace-membre");
   redirect(next ?? (hasRole(user.role, "RESPONSABLE") ? "/admin" : "/espace-membre"));
@@ -65,4 +66,20 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
 export async function logout() {
   await deleteSession();
   redirect("/");
+}
+
+const newPasswordSchema = z
+  .object({ password: passwordSchema, confirm: z.string() })
+  .refine((d) => d.password === d.confirm, { message: "Les mots de passe ne correspondent pas", path: ["confirm"] });
+
+/** Choix d'un nouveau mot de passe après une réinitialisation par l'administrateur. */
+export async function setNewPassword(_prev: FormState, formData: FormData): Promise<FormState> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/connexion");
+  // Réservé au changement obligatoire : sinon, l'ancien mot de passe est exigé (espace membre)
+  if (!user.mustChangePassword) redirect("/espace-membre");
+  const parsed = newPasswordSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors };
+  await db.user.update({ where: { id: user.id }, data: { passwordHash: await bcrypt.hash(parsed.data.password, 12), mustChangePassword: false } });
+  redirect(hasRole(user.role, "RESPONSABLE") ? "/admin" : "/espace-membre");
 }

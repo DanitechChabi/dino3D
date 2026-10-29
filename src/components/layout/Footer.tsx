@@ -4,9 +4,13 @@ import { YoutubeIcon } from "@/components/YoutubeIcon";
 import { WhatsappIcon } from "@/components/WhatsappIcon";
 import { church, footerNav, DAYS } from "@/content/site";
 import { db } from "@/lib/db";
+import { getSettings, mapDirections } from "@/lib/settings";
+import { FacebookIcon } from "@/components/FacebookIcon";
 import { AnimatedLogo } from "../motion/AnimatedLogo";
 
 export async function Footer() {
+  const settings = await getSettings();
+  const directions = mapDirections(settings);
   const services = await db.service.findMany({ where: { weeks: { isEmpty: true }, ministryId: null }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] });
 
   return (
@@ -44,7 +48,13 @@ export async function Footer() {
         <div>
           <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Contact</h3>
           <ul className="space-y-3 text-sm">
-            <li className="flex gap-2"><MapPin className="size-4 shrink-0 text-gold-400" />{church.address}</li>
+            <li>
+              {directions ? (
+                <a href={directions} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><MapPin className="size-4 shrink-0 text-gold-400" />{settings.address}</a>
+              ) : (
+                <span className="flex gap-2"><MapPin className="size-4 shrink-0 text-gold-400" />{settings.address}</span>
+              )}
+            </li>
             <li>
               <a href={`tel:${church.phone.replace(/\s/g, "")}`} className="flex gap-2 hover:text-gold-200"><Phone className="size-4 shrink-0 text-gold-400" />{church.phone}</a>
             </li>
@@ -54,14 +64,19 @@ export async function Footer() {
             <li>
               <a href={`mailto:${church.email}`} className="flex gap-2 hover:text-gold-200"><Mail className="size-4 shrink-0 text-gold-400" />{church.email}</a>
             </li>
-            {church.socials.whatsappChannel && (
+            {settings.whatsappChannel && (
               <li>
-                <a href={church.socials.whatsappChannel} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><WhatsappIcon className="size-4 shrink-0 text-gold-400" />Chaîne WhatsApp EBB‑JR</a>
+                <a href={settings.whatsappChannel} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><WhatsappIcon className="size-4 shrink-0 text-gold-400" />Chaîne WhatsApp EBB‑JR</a>
               </li>
             )}
-            {church.socials.youtube && (
+            {settings.facebook && (
               <li>
-                <a href={church.socials.youtube} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><YoutubeIcon className="size-4 shrink-0 text-gold-400" />Chaîne YouTube</a>
+                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><FacebookIcon className="size-4 shrink-0 text-gold-400" />Page Facebook</a>
+              </li>
+            )}
+            {settings.youtube && (
+              <li>
+                <a href={settings.youtube} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><YoutubeIcon className="size-4 shrink-0 text-gold-400" />Chaîne YouTube</a>
               </li>
             )}
           </ul>

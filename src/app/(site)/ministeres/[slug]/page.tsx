@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { AlbumCard } from "@/components/gallery/AlbumCard";
-import { sortedActivities } from "@/content/activities";
+import { getActivities } from "@/lib/content";
 import { recurrenceLabel } from "@/lib/recurrence";
 
 export async function generateMetadata(props: PageProps<"/ministeres/[slug]">): Promise<Metadata> {
@@ -26,7 +26,7 @@ export default async function MinistryPage(props: PageProps<"/ministeres/[slug]"
     },
   });
   if (!ministry) notFound();
-  const related = sortedActivities.filter((a) => a.ministry === ministry.slug);
+  const related = (await getActivities()).filter((a) => a.ministry === ministry.slug);
 
   return (
     <>

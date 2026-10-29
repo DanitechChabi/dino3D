@@ -27,7 +27,7 @@ export default async function MembersAdmin(props: PageProps<"/admin/membres">) {
         </form>
       </AdminTitle>
       <Panel className="overflow-x-auto p-0 sm:p-0">
-        <table className="w-full min-w-[720px] text-left text-sm">
+        <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="border-b border-night-900/10 text-xs uppercase tracking-wider text-night-800/60">
             <tr>
               <th className="p-4">Membre</th>
@@ -35,6 +35,7 @@ export default async function MembersAdmin(props: PageProps<"/admin/membres">) {
               <th className="p-4">Ministères</th>
               <th className="p-4">Rôle</th>
               <th className="p-4">Statut</th>
+              <th className="p-4">Mot de passe</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-night-900/5">

@@ -14,7 +14,8 @@ import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { PastorPortrait } from "@/components/motion/PastorPortrait";
 import { PhotoMarquee } from "@/components/gallery/PhotoMarquee";
-import { sortedActivities, formatActivityDate } from "@/content/activities";
+import { formatActivityDate } from "@/content/activities";
+import { getActivities } from "@/lib/content";
 import Image from "next/image";
 import { Lamp } from "@/components/motion/Lamp";
 import { LightParticles } from "@/components/motion/LightParticles";
@@ -39,6 +40,7 @@ export default async function HomePage() {
   const caseSums = await caseTotals(openCases.map((c) => c.id));
 
   const week = serviceOccurrences(services, new Date(), 6);
+  const sortedActivities = await getActivities();
 
   return (
     <>

@@ -1,6 +1,8 @@
 "use server";
 
 import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { Role } from "@prisma/client";
 import { db } from "@/lib/db";
@@ -18,6 +20,19 @@ export async function setUserRole(userId: string, role: Role) {
   if (userId === admin.id) return; // on ne modifie pas son propre rôle (évite de perdre l'accès)
   await db.user.update({ where: { id: userId }, data: { role: z.enum(Role).parse(role) } });
   revalidatePath("/admin/membres");
+}
+
+/**
+ * Réinitialise le mot de passe d'un membre : renvoie un mot de passe temporaire, affiché une seule fois
+ * à l'administrateur qui le transmet au membre ; celui-ci devra en choisir un nouveau à la connexion.
+ */
+export async function resetUserPassword(userId: string) {
+  const admin = await requireRole("ADMIN");
+  if (userId === admin.id) return null;
+  const alphabet = "abcdefghjkmnpqrstuvwxyz23456789";
+  const temp = Array.from(randomBytes(8), (b) => alphabet[b % alphabet.length]).join("");
+  await db.user.update({ where: { id: userId }, data: { passwordHash: await bcrypt.hash(temp, 12), mustChangePassword: true } });
+  return temp;
 }
 
 export async function setUserActive(userId: string, active: boolean) {

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Images } from "lucide-react";
-import { sortedActivities, formatActivityDate } from "@/content/activities";
+import { formatActivityDate } from "@/content/activities";
+import { getActivities } from "@/lib/content";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
@@ -10,8 +11,8 @@ import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export const metadata: Metadata = { title: "Blog", description: "Les activités et la vie de l'Église Baptiste Biblique Jésus Revient de Tanmey." };
 
-export default function BlogPage() {
-  const [featured, ...rest] = sortedActivities;
+export default async function BlogPage() {
+  const [featured, ...rest] = await getActivities();
 
   return (
     <>

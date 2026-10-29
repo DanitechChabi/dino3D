@@ -20,7 +20,7 @@ export const getCurrentUser = cache(async () => {
   if (!session) return null;
   const user = await db.user.findUnique({
     where: { id: session.userId },
-    select: { id: true, firstName: true, lastName: true, phone: true, email: true, role: true, active: true },
+    select: { id: true, firstName: true, lastName: true, phone: true, email: true, role: true, active: true, mustChangePassword: true },
   });
   return user?.active ? user : null;
 });
@@ -28,6 +28,8 @@ export const getCurrentUser = cache(async () => {
 export async function requireUser() {
   const user = await getCurrentUser();
   if (!user) redirect("/connexion");
+  // Mot de passe temporaire : on doit d'abord en choisir un nouveau
+  if (user.mustChangePassword) redirect("/changer-mot-de-passe");
   return user;
 }
 

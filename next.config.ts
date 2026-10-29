@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
     // Vignettes des vidéos YouTube (prédications et directs)
     remotePatterns: [new URL("https://i.ytimg.com/vi/**")],
   },
+  experimental: {
+    serverActions: {
+      // Photos envoyées depuis l'administration (déjà réduites dans le navigateur avant l'envoi)
+      bodySizeLimit: "4mb",
+    },
+  },
   turbopack: {
     rules: {
       "*.css": {

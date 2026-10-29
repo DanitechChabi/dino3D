@@ -139,9 +139,6 @@ export const activities: Activity[] = [
   },
 ];
 
-/** Activités triées : les plus récentes d'abord (les activités sans date à la fin). */
-export const sortedActivities = [...activities].sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
-
 export function wallPhotos(a: Activity) {
   return (a.wall ?? []).map((i) => a.photos[i]).filter(Boolean);
 }
