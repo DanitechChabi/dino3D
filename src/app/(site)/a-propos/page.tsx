@@ -1,0 +1,82 @@
+import type { Metadata } from "next";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { SectionTitle } from "@/components/layout/SectionTitle";
+import { Reveal } from "@/components/motion/Reveal";
+import { Timeline } from "@/components/motion/Timeline";
+import { TiltCard } from "@/components/motion/TiltCard";
+import { CrossGlyph } from "@/components/motion/CrossGlyph";
+import { confession, history, team, vision } from "@/content/site";
+
+export const metadata: Metadata = { title: "À propos" };
+
+export default function AboutPage() {
+  return (
+    <>
+      <PageHeader eyebrow="Qui sommes-nous" title="Une église fondée sur la Parole" subtitle="Notre histoire, notre foi et la vision que Dieu nous a confiée." />
+
+      <section className="py-24">
+        <div className="mx-auto max-w-6xl px-4">
+          <SectionTitle center eyebrow="Notre histoire" title="Ce que Dieu a fait au milieu de nous" text="« Jusqu'ici l'Éternel nous a secourus. » — 1 Samuel 7:12" />
+          <Timeline items={history} />
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-night-950 py-24 text-white">
+        <div className="pointer-events-none absolute -right-40 top-0 size-[40rem] rounded-full bg-gold-500/10 blur-3xl" />
+        <div className="relative mx-auto max-w-6xl px-4">
+          <SectionTitle dark eyebrow="Vision & mission" title={vision.vision} />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {vision.mission.map((m, i) => (
+              <Reveal key={m.title} delay={i * 0.1}>
+                <div className="h-full rounded-3xl border border-white/10 bg-white/[0.04] p-7">
+                  <span className="font-serif text-5xl text-gold-400/40">0{i + 1}</span>
+                  <h3 className="mt-3 font-serif text-2xl font-semibold text-gold-200">{m.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/70">{m.text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="confession" className="bg-parchment py-24">
+        <div className="mx-auto max-w-4xl px-4">
+          <SectionTitle center eyebrow="Confession de foi" title="Ce que nous croyons" text="Nous croyons et enseignons ce que la Bible enseigne." />
+          <ol className="space-y-4">
+            {confession.map((c, i) => (
+              <Reveal key={c.title} delay={0.05}>
+                <li className="group flex gap-5 rounded-3xl border border-gold-500/20 bg-white/70 p-6 transition hover:bg-white sm:p-8">
+                  <span className="font-serif text-4xl font-semibold text-gold-500 transition-transform duration-500 group-hover:scale-110">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3 className="font-serif text-2xl font-semibold text-night-900">{c.title}</h3>
+                    <p className="mt-1 leading-relaxed text-night-800/75">{c.text}</p>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-gold-600">{c.ref}</p>
+                  </div>
+                </li>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="py-24">
+        <div className="mx-auto max-w-6xl px-4">
+          <SectionTitle center eyebrow="Nos serviteurs" title="Pasteurs & responsables" />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {team.map((t, i) => (
+              <Reveal key={i} delay={i * 0.08}>
+                <TiltCard className="rounded-3xl border border-night-900/10 bg-white p-4 text-center">
+                  <div className="grid aspect-square place-items-center rounded-2xl bg-gradient-to-b from-night-700 to-night-950">
+                    <CrossGlyph className="h-20 w-auto opacity-80" delay={0.2 + i * 0.2} />
+                  </div>
+                  <h3 className="mt-4 font-serif text-xl font-semibold text-night-900">{t.name}</h3>
+                  <p className="mb-2 text-sm text-gold-600">{t.role}</p>
+                </TiltCard>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-night-950: #04081a;
+  --color-night-900: #070d24;
+  --color-night-800: #0d1636;
+  --color-night-700: #16224d;
+  --color-night-600: #22326b;
+  --color-gold-200: #f8e7b5;
+  --color-gold-300: #f1d88f;
+  --color-gold-400: #e4bd5f;
+  --color-gold-500: #d4a43c;
+  --color-gold-600: #b3862a;
+  --color-ivory: #fbf7ee;
+  --color-parchment: #f3ecdc;
+  --color-ink: #1b1a2e;
+
+  --font-serif: var(--font-cormorant), "Times New Roman", serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+
+  --animate-shimmer: shimmer 3.2s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-rays: rays 60s linear infinite;
+  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
+
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+  @keyframes rays {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.08); }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-gold-300);
+  color: var(--color-night-900);
+}
+
+/* Texte doré animé */
+.text-gold-sheen {
+  background: linear-gradient(100deg, #b3862a 0%, #f8e7b5 25%, #d4a43c 50%, #f8e7b5 75%, #b3862a 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+
+/* Grain léger façon parchemin */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.field {
+  @apply w-full rounded-xl border border-night-700/15 bg-white px-4 py-3 text-ink outline-none transition focus:border-gold-500 focus:ring-4 focus:ring-gold-300/40;
+}
+
+.label {
+  @apply mb-1.5 block text-sm font-semibold text-night-800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .text-gold-sheen, .animate-float, .animate-rays, .animate-pulse-glow { animation: none !important; }
+}

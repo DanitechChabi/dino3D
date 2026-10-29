@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBRE
+  RESPONSABLE
+  TRESORIER
+  ADMIN
+}
+
+model User {
+  id           String    @id @default(cuid())
+  firstName    String
+  lastName     String
+  phone        String    @unique
+  email        String?   @unique
+  passwordHash String
+  role         Role      @default(MEMBRE)
+  active       Boolean   @default(true)
+  birthDate    DateTime?
+  baptismDate  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  ministries   MinistryMember[]
+  announcements Announcement[]
+}
+
+model Ministry {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  summary     String
+  description String
+  icon        String   @default("heart")
+  order       Int      @default(0)
+  members     MinistryMember[]
+}
+
+model MinistryMember {
+  userId     String
+  ministryId String
+  isLeader   Boolean  @default(false)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ministry   Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+
+  @@id([userId, ministryId])
+}
+
+// Culte ou réunion récurrente (dayOfWeek : 0 = dimanche ... 6 = samedi)
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  dayOfWeek   Int
+  startTime   String
+  endTime     String?
+  location    String  @default("Temple principal")
+  order       Int     @default(0)
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  body        String
+  published   Boolean  @default(true)
+  pinned      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  subject   String
+  message   String
+  isPrayer  Boolean  @default(false)
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
