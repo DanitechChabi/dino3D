@@ -7,16 +7,17 @@ export const church = {
   city: "Tanmey",
   tagline: "Jésus revient — préparez-vous à Sa rencontre",
   address: "Tanmey — adresse exacte à compléter", // À COMPLÉTER
-  phone: "+000 00 00 00 00", // À COMPLÉTER
+  phone: "01 97 60 97 49",
+  assistancePhone: "01 53 73 62 65",
   whatsapp: "", // À COMPLÉTER : numéro au format international sans « + », ex. 22900000000
-  email: "contact@ebb-jesusrevient.org", // À COMPLÉTER
+  email: "ebbtanmey@gmail.com",
   socials: {
     facebook: "", // À COMPLÉTER
-    youtube: "", // À COMPLÉTER
+    youtube: "https://www.youtube.com/@genietechw",
   },
   mapEmbedUrl: "", // À COMPLÉTER : lien « Intégrer une carte » de Google Maps
   pastor: {
-    name: "Pasteur — nom à compléter", // À COMPLÉTER
+    name: "Pasteur CHABI BOUKO Youssouf",
     welcome:
       "Bien-aimés, soyez les bienvenus. Notre désir est de vous accueillir comme le Seigneur nous a accueillis : avec amour, dans la vérité de Sa Parole. Que vous cherchiez Dieu pour la première fois ou que vous marchiez avec Lui depuis longtemps, il y a une place pour vous dans la famille de Dieu.",
   },
@@ -75,7 +76,7 @@ export const confession = [
 ];
 
 export const team = [
-  { name: "Nom à compléter", role: "Pasteur principal" },
+  { name: "CHABI BOUKO Youssouf", role: "Pasteur principal" },
   { name: "Nom à compléter", role: "Pasteur adjoint / Ancien" },
   { name: "Nom à compléter", role: "Diacre" },
   { name: "Nom à compléter", role: "Responsable de la louange" },

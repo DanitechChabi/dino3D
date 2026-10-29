@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, Headset } from "lucide-react";
+import { YoutubeIcon } from "@/components/YoutubeIcon";
 import { church, nav, DAYS } from "@/content/site";
 import { db } from "@/lib/db";
 import { AnimatedLogo } from "../motion/AnimatedLogo";
@@ -40,8 +41,20 @@ export async function Footer() {
           <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Contact</h3>
           <ul className="space-y-3 text-sm">
             <li className="flex gap-2"><MapPin className="size-4 shrink-0 text-gold-400" />{church.address}</li>
-            <li className="flex gap-2"><Phone className="size-4 shrink-0 text-gold-400" />{church.phone}</li>
-            <li className="flex gap-2"><Mail className="size-4 shrink-0 text-gold-400" />{church.email}</li>
+            <li>
+              <a href={`tel:${church.phone.replace(/\s/g, "")}`} className="flex gap-2 hover:text-gold-200"><Phone className="size-4 shrink-0 text-gold-400" />{church.phone}</a>
+            </li>
+            <li>
+              <a href={`tel:${church.assistancePhone.replace(/\s/g, "")}`} className="flex gap-2 hover:text-gold-200"><Headset className="size-4 shrink-0 text-gold-400" />Assistance : {church.assistancePhone}</a>
+            </li>
+            <li>
+              <a href={`mailto:${church.email}`} className="flex gap-2 hover:text-gold-200"><Mail className="size-4 shrink-0 text-gold-400" />{church.email}</a>
+            </li>
+            {church.socials.youtube && (
+              <li>
+                <a href={church.socials.youtube} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><YoutubeIcon className="size-4 shrink-0 text-gold-400" />Chaîne YouTube</a>
+              </li>
+            )}
           </ul>
         </div>
       </div>

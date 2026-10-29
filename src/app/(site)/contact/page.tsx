@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { MapPin, Phone, Mail, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Mail, MessageCircle, Headset } from "lucide-react";
+import { YoutubeIcon } from "@/components/YoutubeIcon";
 import { church } from "@/content/site";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
@@ -15,6 +16,7 @@ export default async function ContactPage(props: PageProps<"/contact">) {
   const infos = [
     { icon: MapPin, label: "Adresse", value: church.address },
     { icon: Phone, label: "Téléphone", value: church.phone, href: `tel:${church.phone.replace(/\s/g, "")}` },
+    { icon: Headset, label: "Assistance", value: church.assistancePhone, href: `tel:${church.assistancePhone.replace(/\s/g, "")}` },
     { icon: Mail, label: "E-mail", value: church.email, href: `mailto:${church.email}` },
   ];
 
@@ -37,6 +39,16 @@ export default async function ContactPage(props: PageProps<"/contact">) {
                 </div>
               </div>
             ))}
+            {church.socials.youtube && (
+              <a
+                href={church.socials.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-full bg-[#FF0000] px-6 py-3 font-bold text-white transition hover:brightness-110"
+              >
+                <YoutubeIcon className="size-5" /> Notre chaîne YouTube
+              </a>
+            )}
             {church.whatsapp && (
               <a
                 href={`https://wa.me/${church.whatsapp}`}
