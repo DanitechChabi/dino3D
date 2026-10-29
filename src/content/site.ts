@@ -14,6 +14,7 @@ export const church = {
   socials: {
     facebook: "", // À COMPLÉTER
     youtube: "https://www.youtube.com/@genietechw",
+    whatsappChannel: "https://whatsapp.com/channel/0029VbC6GNE9WtCAv1X50M2l",
   },
   foundedYear: 2000,
   founder: "Pasteur CHABI BOUKO Youssouf",

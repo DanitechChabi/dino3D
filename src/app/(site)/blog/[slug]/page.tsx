@@ -9,6 +9,7 @@ import { SplitWords } from "@/components/motion/SplitWords";
 import { Reveal } from "@/components/motion/Reveal";
 import { PhotoGrid } from "@/components/gallery/PhotoGrid";
 import { ShareButtons } from "@/components/ShareButtons";
+import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export function generateStaticParams() {
   return activities.map((a) => ({ slug: a.slug }));
@@ -78,7 +79,10 @@ export default async function ArticlePage(props: PageProps<"/blog/[slug]">) {
           )}
 
           <Reveal className="border-y border-night-900/10 py-5">
-            <ShareButtons title={article.title} />
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <ShareButtons title={article.title} />
+              <WhatsappChannelButton className="text-sm" />
+            </div>
           </Reveal>
         </div>
 

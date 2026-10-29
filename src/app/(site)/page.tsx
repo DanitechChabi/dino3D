@@ -20,6 +20,7 @@ import { LightParticles } from "@/components/motion/LightParticles";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { MinistryIcon } from "@/components/MinistryIcon";
 import { ChurchStats } from "@/components/ChurchStats";
+import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export default async function HomePage() {
   const [services, ministries, announcements] = await Promise.all([
@@ -205,6 +206,9 @@ export default async function HomePage() {
           <Reveal className="flex flex-wrap justify-center gap-3">
             <MagneticButton href="/contact?priere=1">Demander la prière</MagneticButton>
             <MagneticButton href="/inscription" variant="ghost">Rejoindre la famille</MagneticButton>
+          </Reveal>
+          <Reveal delay={0.15} className="mt-6 flex justify-center">
+            <WhatsappChannelButton />
           </Reveal>
         </div>
       </section>

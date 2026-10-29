@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MapPin, Phone, Mail, MessageCircle, Headset } from "lucide-react";
 import { YoutubeIcon } from "@/components/YoutubeIcon";
+import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 import { church } from "@/content/site";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
@@ -39,6 +40,7 @@ export default async function ContactPage(props: PageProps<"/contact">) {
                 </div>
               </div>
             ))}
+            <WhatsappChannelButton className="w-full" />
             {church.socials.youtube && (
               <a
                 href={church.socials.youtube}

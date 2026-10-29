@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail, Headset } from "lucide-react";
 import { YoutubeIcon } from "@/components/YoutubeIcon";
+import { WhatsappIcon } from "@/components/WhatsappIcon";
 import { church, nav, DAYS } from "@/content/site";
 import { db } from "@/lib/db";
 import { AnimatedLogo } from "../motion/AnimatedLogo";
@@ -50,6 +51,11 @@ export async function Footer() {
             <li>
               <a href={`mailto:${church.email}`} className="flex gap-2 hover:text-gold-200"><Mail className="size-4 shrink-0 text-gold-400" />{church.email}</a>
             </li>
+            {church.socials.whatsappChannel && (
+              <li>
+                <a href={church.socials.whatsappChannel} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><WhatsappIcon className="size-4 shrink-0 text-gold-400" />Chaîne WhatsApp EBB‑JR</a>
+              </li>
+            )}
             {church.socials.youtube && (
               <li>
                 <a href={church.socials.youtube} target="_blank" rel="noopener noreferrer" className="flex gap-2 hover:text-gold-200"><YoutubeIcon className="size-4 shrink-0 text-gold-400" />Chaîne YouTube</a>

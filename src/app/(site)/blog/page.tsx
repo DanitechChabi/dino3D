@@ -6,6 +6,7 @@ import { sortedActivities, formatActivityDate } from "@/content/activities";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Reveal } from "@/components/motion/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
+import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export const metadata: Metadata = { title: "Blog", description: "Les activités et la vie de l'Église Baptiste Biblique Jésus Revient de Tanmey." };
 
@@ -17,6 +18,14 @@ export default function BlogPage() {
       <PageHeader eyebrow="Blog" title="La vie de l'église" subtitle="Conférences, formations, cultes et moments fraternels : retrouvez nos activités en récits et en images." />
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-4">
+          <Reveal className="mb-10 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-[#25D366]/30 bg-white p-5 sm:p-6">
+            <p className="max-w-xl text-night-800">
+              <span className="font-serif text-2xl font-semibold text-night-900">Ne manquez aucune nouvelle.</span>
+              <br />
+              Annonces, activités et enseignements, directement sur votre téléphone.
+            </p>
+            <WhatsappChannelButton />
+          </Reveal>
           {featured && (
             <Reveal>
               <Link href={`/blog/${featured.slug}`} className="group grid overflow-hidden rounded-[2rem] bg-night-950 text-white lg:grid-cols-[1.25fr_1fr]">
