@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CalendarDays, Clock, MapPin } from "lucide-react";
-import { activities, sortedActivities, getActivity, formatActivityDate } from "@/content/activities";
+import { activities, sortedActivities, getActivity, formatActivityDate, wallPhotos } from "@/content/activities";
 import { CinematicHero } from "@/components/motion/CinematicHero";
 import { ReadingProgress } from "@/components/motion/ReadingProgress";
 import { SplitWords } from "@/components/motion/SplitWords";
 import { Reveal } from "@/components/motion/Reveal";
 import { PhotoGrid } from "@/components/gallery/PhotoGrid";
+import { PolaroidWall } from "@/components/gallery/PolaroidWall";
 import { ShareButtons } from "@/components/ShareButtons";
 import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
@@ -88,6 +89,11 @@ export default async function ArticlePage(props: PageProps<"/blog/[slug]">) {
 
         <div className="mx-auto mt-14 max-w-6xl px-4">
           <h2 className="mb-6 font-serif text-3xl font-semibold text-night-900">En images</h2>
+          {wallPhotos(article).length > 0 && (
+            <div className="mb-12">
+              <PolaroidWall photos={wallPhotos(article)} />
+            </div>
+          )}
           <PhotoGrid photos={article.photos} />
         </div>
 

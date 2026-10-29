@@ -9,11 +9,16 @@ import { CrossGlyph } from "@/components/motion/CrossGlyph";
 import { church, confession, history, team, vision } from "@/content/site";
 import { db } from "@/lib/db";
 import { ChurchStats } from "@/components/ChurchStats";
+import { PolaroidWall } from "@/components/gallery/PolaroidWall";
+import { getActivity, wallPhotos } from "@/content/activities";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = { title: "À propos" };
 
 export default async function AboutPage() {
   const ministries = await db.ministry.count();
+  const souvenirs = getActivity("souvenirs");
   return (
     <>
       <PageHeader eyebrow="Qui sommes-nous" title="Une église fondée sur la Parole" subtitle="Notre histoire, notre foi et la vision que Dieu nous a confiée." />
@@ -27,6 +32,20 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      {souvenirs && (
+        <section className="bg-parchment py-24">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <SectionTitle eyebrow="Archives" title="Nos souvenirs" text="Quelques images d'hier, témoins de la fidélité de Dieu au fil des années." />
+              <Link href="/galerie/souvenirs" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+                Tout l&apos;album ({souvenirs.photos.length} photos) <ArrowRight className="size-4" />
+              </Link>
+            </div>
+            <PolaroidWall photos={wallPhotos(souvenirs)} />
+          </div>
+        </section>
+      )}
 
       <section className="relative overflow-hidden bg-night-950 py-24 text-white">
         <div className="pointer-events-none absolute -right-40 top-0 size-[40rem] rounded-full bg-gold-500/10 blur-3xl" />

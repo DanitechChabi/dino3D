@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, BookOpen } from "lucide-react";
-import { activities, getActivity, formatActivityDate } from "@/content/activities";
+import { activities, getActivity, formatActivityDate, wallPhotos } from "@/content/activities";
 import { CinematicHero } from "@/components/motion/CinematicHero";
 import { SplitWords } from "@/components/motion/SplitWords";
 import { Reveal } from "@/components/motion/Reveal";
 import { PhotoGrid } from "@/components/gallery/PhotoGrid";
+import { PolaroidWall } from "@/components/gallery/PolaroidWall";
 
 export function generateStaticParams() {
   return activities.map((a) => ({ slug: a.slug }));
@@ -47,6 +48,11 @@ export default async function AlbumPage(props: PageProps<"/galerie/[slug]">) {
               </Link>
             </div>
           </Reveal>
+          {wallPhotos(album).length > 0 && (
+            <div className="mb-12">
+              <PolaroidWall photos={wallPhotos(album)} />
+            </div>
+          )}
           <PhotoGrid photos={album.photos} />
         </div>
       </section>
