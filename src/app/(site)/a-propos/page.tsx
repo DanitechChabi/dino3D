@@ -5,19 +5,25 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Timeline } from "@/components/motion/Timeline";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { CrossGlyph } from "@/components/motion/CrossGlyph";
-import { confession, history, team, vision } from "@/content/site";
+import { church, confession, history, team, vision } from "@/content/site";
+import { db } from "@/lib/db";
+import { ChurchStats } from "@/components/ChurchStats";
 
 export const metadata: Metadata = { title: "À propos" };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const ministries = await db.ministry.count();
   return (
     <>
       <PageHeader eyebrow="Qui sommes-nous" title="Une église fondée sur la Parole" subtitle="Notre histoire, notre foi et la vision que Dieu nous a confiée." />
 
       <section className="py-24">
         <div className="mx-auto max-w-6xl px-4">
-          <SectionTitle center eyebrow="Notre histoire" title="Ce que Dieu a fait au milieu de nous" text="« Jusqu'ici l'Éternel nous a secourus. » — 1 Samuel 7:12" />
+          <SectionTitle center eyebrow={`Notre histoire depuis ${church.foundedYear}`} title="Ce que Dieu a fait au milieu de nous" text="« Jusqu'ici l'Éternel nous a secourus. » — 1 Samuel 7:12" />
           <Timeline items={history} />
+          <div className="mx-auto mt-20 max-w-5xl rounded-[2rem] bg-night-950 px-4 py-12">
+            <ChurchStats ministries={ministries} dark />
+          </div>
         </div>
       </section>
 

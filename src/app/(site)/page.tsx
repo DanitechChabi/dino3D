@@ -16,6 +16,7 @@ import { Lamp } from "@/components/motion/Lamp";
 import { LightParticles } from "@/components/motion/LightParticles";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { MinistryIcon } from "@/components/MinistryIcon";
+import { ChurchStats } from "@/components/ChurchStats";
 
 export default async function HomePage() {
   const [services, ministries, announcements] = await Promise.all([
@@ -48,7 +49,7 @@ export default async function HomePage() {
             <Reveal delay={0.1}>
               <p className="font-serif text-2xl italic leading-relaxed text-night-800">« {church.pastor.welcome} »</p>
               <p className="mt-6 font-semibold text-night-900">{church.pastor.name}</p>
-              <p className="text-sm text-gold-600">Pasteur principal</p>
+              <p className="text-sm text-gold-600">{church.pastor.title}</p>
               <div className="mt-8">
                 <MagneticButton href="/a-propos" variant="dark">
                   Notre histoire <ArrowRight className="ml-1 inline size-4" />
@@ -56,6 +57,9 @@ export default async function HomePage() {
               </div>
             </Reveal>
           </div>
+        </div>
+        <div className="mx-auto mt-24 max-w-5xl border-t border-gold-500/25 px-4 pt-14">
+          <ChurchStats ministries={ministries.length} />
         </div>
       </section>
 

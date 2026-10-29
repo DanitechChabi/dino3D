@@ -15,9 +15,13 @@ export const church = {
     facebook: "", // À COMPLÉTER
     youtube: "https://www.youtube.com/@genietechw",
   },
+  foundedYear: 2000,
+  founder: "Pasteur CHABI BOUKO Youssouf",
+  activeMembers: 100, // « une centaine de membres actifs »
   mapEmbedUrl: "", // À COMPLÉTER : lien « Intégrer une carte » de Google Maps
   pastor: {
     name: "Pasteur CHABI BOUKO Youssouf",
+    title: "Pasteur principal et fondateur",
     welcome:
       "Bien-aimés, soyez les bienvenus. Notre désir est de vous accueillir comme le Seigneur nous a accueillis : avec amour, dans la vérité de Sa Parole. Que vous cherchiez Dieu pour la première fois ou que vous marchiez avec Lui depuis longtemps, il y a une place pour vous dans la famille de Dieu.",
   },
@@ -48,10 +52,21 @@ export const gospelActs = [
 ];
 
 export const history = [
-  { year: "À compléter", title: "Les premiers pas", text: "Quelques frères et sœurs se réunissent pour prier et étudier la Parole de Dieu. — À COMPLÉTER avec l'histoire réelle." },
-  { year: "À compléter", title: "La fondation de l'église", text: "L'Église Baptiste Biblique Jésus Revient est officiellement fondée à Tanmey. — À COMPLÉTER." },
-  { year: "À compléter", title: "Le premier temple", text: "La communauté grandit et se dote d'un lieu de culte. — À COMPLÉTER." },
-  { year: "Aujourd'hui", title: "Une famille qui grandit", text: "Par la grâce de Dieu, l'église continue d'annoncer l'Évangile et d'attendre le retour du Seigneur." },
+  {
+    year: "2000",
+    title: "La fondation",
+    text: "Le Pasteur CHABI BOUKO Youssouf fonde l'Église Baptiste Biblique Jésus Revient à Tanmey, avec une conviction qui donne son nom à l'église : Jésus revient, et chaque âme doit s'y préparer.",
+  },
+  {
+    year: "Les années de fidélité",
+    title: "Une église enracinée dans la Parole",
+    text: "Année après année, l'assemblée grandit autour de la prédication fidèle de la Bible, de la prière et de l'évangélisation à Tanmey et dans les environs.",
+  },
+  {
+    year: "Aujourd'hui",
+    title: "Une famille d'une centaine de membres",
+    text: "Plus de vingt-cinq ans après sa fondation, l'église compte une centaine de membres actifs, engagés dans les ministères, et continue d'annoncer l'Évangile en attendant le retour du Seigneur.",
+  },
 ];
 
 export const vision = {
@@ -76,7 +91,7 @@ export const confession = [
 ];
 
 export const team = [
-  { name: "CHABI BOUKO Youssouf", role: "Pasteur principal" },
+  { name: "CHABI BOUKO Youssouf", role: "Pasteur principal et fondateur" },
   { name: "Nom à compléter", role: "Pasteur adjoint / Ancien" },
   { name: "Nom à compléter", role: "Diacre" },
   { name: "Nom à compléter", role: "Responsable de la louange" },
