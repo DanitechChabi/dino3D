@@ -19,4 +19,4 @@ export async function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/admin/:path*", "/espace-membre/:path*"] };
+export const config = { matcher: ["/admin/:path*", "/espace-membre/:path*", "/solidarite/demande"] };

@@ -121,6 +121,6 @@ export const nav = [
 ];
 
 // Liens supplémentaires du pied de page
-export const footerNav = [...nav.slice(0, 4), { href: "/annonces", label: "Annonces" }, ...nav.slice(4)];
+export const footerNav = [...nav.slice(0, 4), { href: "/annonces", label: "Annonces" }, ...nav.slice(4), { href: "/solidarite", label: "Solidarité" }, { href: "/donner", label: "Faire un don" }];
 
 export const DAYS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];

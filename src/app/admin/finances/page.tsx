@@ -19,7 +19,7 @@ export default async function FinancesPage() {
   await requireRole("TRESORIER");
   const [o, categories, members] = await Promise.all([
     financeOverview(),
-    db.givingCategory.findMany({ orderBy: { order: "asc" } }),
+    db.givingCategory.findMany({ where: { slug: { not: "solidarite" } }, orderBy: { order: "asc" } }),
     db.user.findMany({ where: { active: true }, select: { phone: true, firstName: true, lastName: true }, orderBy: { lastName: "asc" } }),
   ]);
   const provider = getProvider();

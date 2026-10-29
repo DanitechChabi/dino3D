@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing, HandCoins } from "lucide-react";
+import { LayoutDashboard, Users, CalendarClock, CalendarHeart, Megaphone, Mail, BellRing, HandCoins, HeartHandshake } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const items = [
   { href: "/admin/annonces", label: "Annonces", icon: Megaphone },
   { href: "/admin/messages", label: "Messages & prières", icon: Mail },
   { href: "/admin/finances", label: "Finances", icon: HandCoins, treasurer: true },
+  { href: "/admin/solidarite", label: "Solidarité", icon: HeartHandshake, treasurer: true },
   { href: "/admin/membres", label: "Membres", icon: Users, adminOnly: true },
   { href: "/admin/cultes", label: "Cultes & horaires", icon: CalendarClock, adminOnly: true },
   { href: "/admin/notifications", label: "Notifications", icon: BellRing, adminOnly: true },

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Users, UserPlus, Mail, HeartHandshake } from "lucide-react";
+import { Users, UserPlus, Mail, HeartHandshake, HandHelping } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/dal";
+import { hasRole, requireRole } from "@/lib/dal";
 import { AdminTitle, Panel } from "@/components/admin/ui";
 import { AnimatedNumber } from "@/components/motion/AnimatedNumber";
 import { Reveal } from "@/components/motion/Reveal";
@@ -26,11 +26,13 @@ export default async function AdminHome() {
     db.contactMessage.findMany({ where: visibleMessages, orderBy: { createdAt: "desc" }, take: 5 }),
   ]);
 
+  const pendingHelp = hasRole(user.role, "TRESORIER") ? await db.solidarityCase.count({ where: { status: "PROPOSED" } }) : 0;
   const stats = [
     { label: "Membres actifs", value: members, icon: Users },
     { label: "Nouveaux ce mois", value: newMembers, icon: UserPlus },
     { label: "Messages non traités", value: unread, icon: Mail },
     ...(isAdmin ? [{ label: "Prières en attente", value: prayers, icon: HeartHandshake }] : []),
+    ...(hasRole(user.role, "TRESORIER") ? [{ label: "Demandes d'aide à examiner", value: pendingHelp, icon: HandHelping }] : []),
   ];
 
   return (

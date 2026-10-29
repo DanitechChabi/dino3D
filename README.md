@@ -44,6 +44,19 @@ tester sans argent réel (refusé en production). L'intégration **SaaS Pay** se
 `src/lib/payments/saaspay.ts` (3 fonctions à compléter avec la documentation de l'API), puis `PAYMENT_PROVIDER="saaspay"`.
 URL de notification à déclarer chez le fournisseur : `https://<site>/api/paiements/notification/saaspay`.
 
+## Phase 4 (livrée) : solidarité
+
+- **Collectes** (`/solidarite`) : motif, objectif, date limite, anneau et barres de progression animés, nombre de
+  donateurs, don en ligne direct à la collecte (reçu mentionnant la collecte).
+- **Discrétion** : collecte publique, réservée aux membres connectés, ou bénéficiaire anonyme (nom jamais envoyé
+  au navigateur des visiteurs).
+- **Demande d'aide confidentielle** (`/solidarite/demande`, membres connectés) : pour soi ou pour un frère ;
+  lue uniquement par le pasteur et le trésorier.
+- **Validation obligatoire** (`/admin/solidarite`) : relecture du texte, objectif, date limite, discrétion,
+  publication ou classement sans suite ; suivi des dons, **aides versées** (tracées au journal financier),
+  clôture avec **message de remerciement** et notification.
+- **Transparence** : historique public des aides apportées et des montants versés.
+
 ## Démarrage
 
 Prérequis : Node.js 20.9+ et PostgreSQL.
@@ -88,6 +101,5 @@ sessions signées (JWT HS256 dans un cookie httpOnly), mots de passe hachés ave
 
 ## Prochaines phases
 
-3. Branchement de l'API SaaS Pay (documentation attendue)
-4. Collectes de solidarité, tableau de bord trésorier
-5. Lives : programmation, page en direct, archives
+- Branchement de l'API SaaS Pay (documentation attendue)
+- Phase 5 — Lives : programmation, page en direct, archives

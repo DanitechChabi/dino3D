@@ -22,15 +22,19 @@ import { SectionTitle } from "@/components/layout/SectionTitle";
 import { MinistryIcon } from "@/components/MinistryIcon";
 import { ChurchStats } from "@/components/ChurchStats";
 import { DateBlock } from "@/components/events/DateBlock";
+import { ProgressBar } from "@/components/solidarity/Progress";
+import { caseTotals } from "@/lib/solidarity";
 import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export default async function HomePage() {
-  const [services, ministries, announcements, upcomingEvents] = await Promise.all([
+  const [services, ministries, announcements, upcomingEvents, openCases] = await Promise.all([
     db.service.findMany({ where: { ministryId: null }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 3 }),
     db.event.findMany({ where: { published: true, startAt: { gte: new Date() } }, orderBy: { startAt: "asc" }, take: 3 }),
+    db.solidarityCase.findMany({ where: { status: "OPEN", visibility: { not: "MEMBERS" } }, orderBy: { reviewedAt: "desc" }, take: 2 }),
   ]);
+  const caseSums = await caseTotals(openCases.map((c) => c.id));
 
   const week = serviceOccurrences(services, new Date(), 6);
 
@@ -203,6 +207,33 @@ export default async function HomePage() {
           <PhotoMarquee photos={sortedActivities.flatMap((a) => a.photos).slice(0, 16)} href="/galerie" />
         </div>
       </section>
+
+      {/* Solidarité */}
+      {openCases.length > 0 && (
+        <section className="bg-parchment py-24">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <SectionTitle eyebrow="Solidarité" title="Portons ensemble les fardeaux" text="« Portez les fardeaux les uns des autres. » — Galates 6:2" />
+              <Link href="/solidarite" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+                Toutes les collectes <ArrowRight className="size-4" />
+              </Link>
+            </div>
+            <div className="grid gap-5 md:grid-cols-2">
+              {openCases.map((c, i) => (
+                <Reveal key={c.id} delay={i * 0.08}>
+                  <Link href={`/solidarite/${c.slug}`} className="block h-full">
+                    <TiltCard className="h-full rounded-3xl bg-night-950 p-7 text-white">
+                      <span className="rounded-full bg-gold-300/20 px-3 py-1 text-xs font-bold text-gold-200">{c.reason}</span>
+                      <h3 className="mt-4 font-serif text-2xl font-semibold">{c.title}</h3>
+                      <div className="mt-6"><ProgressBar raised={caseSums.get(c.id)?.raised ?? 0} goal={c.goal} dark /></div>
+                    </TiltCard>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Annonces */}
       {announcements.length > 0 && (

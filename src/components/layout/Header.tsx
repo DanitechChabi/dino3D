@@ -123,7 +123,7 @@ export function Header({ user }: { user: { firstName: string; isStaff: boolean }
               animate="show"
               transition={{ staggerChildren: 0.06, delayChildren: 0.25 }}
             >
-              {[...nav, { href: "/donner", label: "Faire un don" }, { href: user ? "/espace-membre" : "/connexion", label: user ? "Mon espace" : "Espace membre" }].map((item) => (
+              {[...nav, { href: "/solidarite", label: "Solidarité" }, { href: "/donner", label: "Faire un don" }, { href: user ? "/espace-membre" : "/connexion", label: user ? "Mon espace" : "Espace membre" }].map((item) => (
                 <motion.li
                   key={item.href + item.label}
                   variants={{ hidden: { opacity: 0, x: -30, filter: "blur(6px)" }, show: { opacity: 1, x: 0, filter: "blur(0px)" } }}

@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Reçu de don", robots: { index: fals
 // Reçu imprimable (ou enregistrable en PDF). Le lien contient une référence non devinable.
 export default async function ReceiptPage(props: PageProps<"/recu/[reference]">) {
   const { reference } = await props.params;
-  const d = await db.donation.findUnique({ where: { reference }, include: { category: true } });
+  const d = await db.donation.findUnique({ where: { reference }, include: { category: true, solidarity: { select: { title: true, visibility: true } } } });
   if (!d || d.status !== "SUCCEEDED" || !d.paidAt) notFound();
 
   const rows = [
@@ -20,6 +20,7 @@ export default async function ReceiptPage(props: PageProps<"/recu/[reference]">)
     ["Date", `${formatDay(d.paidAt)} à ${formatTime(d.paidAt)}`],
     ["Donateur", d.anonymous ? "Anonyme" : (d.donorName ?? "—")],
     ["Type de don", d.category.name],
+    ...(d.solidarity ? [["Collecte", d.solidarity.title]] : []),
     ["Moyen de paiement", METHOD_LABELS[d.method]],
     ...(d.note ? [["Message", d.note]] : []),
   ];

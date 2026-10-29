@@ -173,9 +173,14 @@ export default async function MemberPage() {
                       ))}
                     </ul>
                   )}
-                  <Link href="/donner" className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-5 py-2.5 text-sm font-bold text-night-950">
-                    <HandCoins className="size-4" /> Faire un don
-                  </Link>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Link href="/donner" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-5 py-2.5 text-sm font-bold text-night-950">
+                      <HandCoins className="size-4" /> Faire un don
+                    </Link>
+                    <Link href="/solidarite/demande" className="inline-flex items-center rounded-full border border-night-900/15 px-4 py-2.5 text-sm font-bold text-night-900 hover:border-gold-400">
+                      Demander de l&apos;aide
+                    </Link>
+                  </div>
                 </Card>
               </Reveal>
             </div>

@@ -79,6 +79,13 @@ async function main() {
     await db.givingCategory.upsert({ where: { slug: g.slug }, update: {}, create: { ...g, order } });
   }
 
+  // Catégorie technique des dons aux collectes de solidarité (n'apparaît pas dans la liste générale)
+  await db.givingCategory.upsert({
+    where: { slug: "solidarite" },
+    update: {},
+    create: { slug: "solidarite", name: "Solidarité", description: "Don à une collecte de solidarité.", active: false, order: 99 },
+  });
+
   // Événement réel passé, relié à son récit sur le blog
   await db.event.upsert({
     where: { slug: "conference-couple-2026" },

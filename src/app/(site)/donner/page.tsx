@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { HandHeart, Landmark, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, HandHeart, Landmark, ShieldCheck } from "lucide-react";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/dal";
 import { getProvider } from "@/lib/payments";
@@ -13,7 +14,7 @@ export const metadata: Metadata = { title: "Faire un don", description: "Dîmes,
 export default async function GivePage(props: PageProps<"/donner">) {
   const { type } = await props.searchParams;
   const [categories, user] = await Promise.all([
-    db.givingCategory.findMany({ where: { active: true }, orderBy: { order: "asc" }, select: { id: true, slug: true, name: true, description: true, confidential: true } }),
+    db.givingCategory.findMany({ where: { active: true, slug: { not: "solidarite" } }, orderBy: { order: "asc" }, select: { id: true, slug: true, name: true, description: true, confidential: true } }),
     getCurrentUser(),
   ]);
   const provider = getProvider();
@@ -59,6 +60,15 @@ export default async function GivePage(props: PageProps<"/donner">) {
                 </div>
               </Reveal>
             ))}
+            <Reveal delay={0.35}>
+              <Link href="/solidarite" className="group flex items-center justify-between gap-3 rounded-3xl border border-gold-500/40 bg-gold-300/20 p-5">
+                <span>
+                  <span className="block font-bold text-night-900">Soutenir un frère ou une sœur</span>
+                  <span className="text-sm text-night-800/70">Voir les collectes de solidarité en cours</span>
+                </span>
+                <ArrowRight className="size-5 text-gold-600 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Reveal>
             <Reveal delay={0.4}>
               <blockquote className="rounded-3xl bg-night-950 p-6 font-serif text-xl italic leading-snug text-white">
                 « Honore l&apos;Éternel avec tes biens, et avec les prémices de tout ton revenu. »

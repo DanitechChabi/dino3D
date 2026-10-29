@@ -8,10 +8,12 @@ import { getCurrentUser } from "@/lib/dal";
 import { getProvider, newReference, refreshDonation, settleDonation } from "@/lib/payments";
 import { tooManyAttempts } from "@/lib/rate-limit";
 import { MAX_AMOUNT, MIN_AMOUNT, formatXOF } from "@/lib/money";
+import { isAcceptingGifts } from "@/lib/solidarity";
 import { keepValues, normalizePhone, type FormState } from "@/lib/validation";
 
 const schema = z.object({
-  categoryId: z.string().min(1, "Choisissez un type de don"),
+  categoryId: z.string().optional(),
+  solidarityId: z.string().optional(),
   amount: z.coerce.number().int("Montant entier en F CFA").min(MIN_AMOUNT, `Montant minimum : ${formatXOF(MIN_AMOUNT)}`).max(MAX_AMOUNT, "Montant trop élevé"),
   method: z.enum(["MOBILE_MONEY", "CARD"]),
   name: z.string().trim().max(100).optional(),
@@ -32,7 +34,7 @@ export async function startDonation(_prev: FormState, formData: FormData): Promi
 
   const parsed = schema.safeParse({ ...Object.fromEntries(formData), anonymous: formData.get("anonymous") === "on" });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, values: keepValues(formData) };
-  const { categoryId, amount, method, anonymous, note } = parsed.data;
+  const { amount, method, anonymous, note, solidarityId } = parsed.data;
 
   const user = await getCurrentUser();
   const name = parsed.data.name || (user ? `${user.firstName} ${user.lastName}` : "");
@@ -45,12 +47,25 @@ export async function startDonation(_prev: FormState, formData: FormData): Promi
   const ip = (await headers()).get("x-forwarded-for")?.split(",")[0] ?? "local";
   if (tooManyAttempts(`don:${ip}`, 15)) return { message: "Trop de tentatives. Réessayez dans quelques minutes.", values: keepValues(formData) };
 
-  const category = await db.givingCategory.findFirst({ where: { id: categoryId, active: true } });
-  if (!category) return { errors: { categoryId: ["Type de don invalide"] }, values: keepValues(formData) };
+  // Don à une collecte de solidarité, ou don classique
+  let caseRow: { id: string; title: string } | null = null;
+  let category;
+  if (solidarityId) {
+    const c = await db.solidarityCase.findUnique({ where: { id: solidarityId } });
+    if (!c || !isAcceptingGifts(c) || (c.visibility === "MEMBERS" && !user)) {
+      return { message: "Cette collecte n'accepte plus de dons.", values: keepValues(formData) };
+    }
+    caseRow = c;
+    category = await db.givingCategory.findUnique({ where: { slug: "solidarite" } });
+  } else {
+    category = await db.givingCategory.findFirst({ where: { id: parsed.data.categoryId, active: true } });
+  }
+  if (!category) return { errors: { categoryId: ["Choisissez un type de don"] }, values: keepValues(formData) };
+  const categoryId = category.id;
 
   const reference = newReference();
   await db.donation.create({
-    data: { reference, categoryId, amount, method, anonymous, note: note || null, userId: user?.id, donorName: name, donorPhone: phone ?? null, provider: provider.id },
+    data: { reference, categoryId, solidarityId: caseRow?.id, amount, method, anonymous, note: note || null, userId: user?.id, donorName: name, donorPhone: phone ?? null, provider: provider.id },
   });
 
   const base = await origin();
@@ -60,7 +75,7 @@ export async function startDonation(_prev: FormState, formData: FormData): Promi
       reference,
       amount,
       method,
-      description: `${category.name} — EBB-JR Tanmey`,
+      description: caseRow ? `Solidarité : ${caseRow.title}` : `${category.name} — EBB-JR Tanmey`,
       customer: { name, phone },
       returnUrl: `${base}/donner/merci/${reference}`,
       webhookUrl: `${base}/api/paiements/notification/${provider.id}`,

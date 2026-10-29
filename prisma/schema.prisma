@@ -15,25 +15,28 @@ enum Role {
 }
 
 model User {
-  id                String              @id @default(cuid())
-  firstName         String
-  lastName          String
-  phone             String              @unique
-  email             String?             @unique
-  passwordHash      String
-  role              Role                @default(MEMBRE)
-  active            Boolean             @default(true)
-  birthDate         DateTime?
-  baptismDate       DateTime?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  ministries        MinistryMember[]
-  announcements     Announcement[]
-  registrations     EventRegistration[]
-  pushSubscriptions PushSubscription[]
-  donations         Donation[]          @relation("DonationDonor")
-  recordedDonations Donation[]          @relation("DonationRecorder")
-  financeLogs       FinanceLog[]
+  id                 String              @id @default(cuid())
+  firstName          String
+  lastName           String
+  phone              String              @unique
+  email              String?             @unique
+  passwordHash       String
+  role               Role                @default(MEMBRE)
+  active             Boolean             @default(true)
+  birthDate          DateTime?
+  baptismDate        DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  ministries         MinistryMember[]
+  announcements      Announcement[]
+  registrations      EventRegistration[]
+  pushSubscriptions  PushSubscription[]
+  donations          Donation[]          @relation("DonationDonor")
+  recordedDonations  Donation[]          @relation("DonationRecorder")
+  financeLogs        FinanceLog[]
+  solidarityRequests SolidarityCase[]    @relation("SolidarityRequester")
+  solidarityReviews  SolidarityCase[]    @relation("SolidarityReviewer")
+  solidarityPayouts  SolidarityPayout[]
 }
 
 model Ministry {
@@ -192,28 +195,31 @@ model GivingCategory {
 }
 
 model Donation {
-  id           String         @id @default(cuid())
+  id           String          @id @default(cuid())
   // Référence publique, non devinable (sert aussi de lien vers le reçu)
-  reference    String         @unique
+  reference    String          @unique
   categoryId   String
-  category     GivingCategory @relation(fields: [categoryId], references: [id])
+  category     GivingCategory  @relation(fields: [categoryId], references: [id])
   amount       Int // en francs CFA (XOF)
-  currency     String         @default("XOF")
+  currency     String          @default("XOF")
   method       PaymentMethod
-  status       DonationStatus @default(PENDING)
+  status       DonationStatus  @default(PENDING)
   userId       String?
-  user         User?          @relation("DonationDonor", fields: [userId], references: [id], onDelete: SetNull)
+  user         User?           @relation("DonationDonor", fields: [userId], references: [id], onDelete: SetNull)
   donorName    String?
   donorPhone   String?
-  anonymous    Boolean        @default(false)
+  anonymous    Boolean         @default(false)
   note         String?
   provider     String? // « simulation », « saaspay »…
   providerRef  String?
   // Saisie manuelle (quête en espèces) : qui l'a enregistrée et pour quel culte
   recordedById String?
-  recordedBy   User?          @relation("DonationRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+  recordedBy   User?           @relation("DonationRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
   serviceDate  DateTime?
-  createdAt    DateTime       @default(now())
+  // Don à une collecte de solidarité
+  solidarityId String?
+  solidarity   SolidarityCase? @relation(fields: [solidarityId], references: [id], onDelete: SetNull)
+  createdAt    DateTime        @default(now())
   paidAt       DateTime?
 
   @@index([status, paidAt])
@@ -228,4 +234,59 @@ model FinanceLog {
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
+}
+
+// ——— Phase 4 : solidarité ———
+
+enum SolidarityStatus {
+  PROPOSED // demande en attente de validation
+  OPEN // collecte publiée
+  CLOSED // collecte terminée
+  REJECTED // demande non retenue
+}
+
+enum SolidarityVisibility {
+  PUBLIC // visible de tous
+  MEMBERS // réservée aux membres connectés
+  ANONYMOUS // visible de tous, bénéficiaire non nommé
+}
+
+model SolidarityCase {
+  id              String               @id @default(cuid())
+  slug            String               @unique
+  title           String
+  reason          String // Maladie, Deuil, Mariage, Naissance, Scolarité…
+  beneficiaryName String
+  story           String
+  goal            Int? // objectif en F CFA (fixé à la validation)
+  deadline        DateTime?
+  visibility      SolidarityVisibility @default(MEMBERS)
+  status          SolidarityStatus     @default(PROPOSED)
+  forSelf         Boolean              @default(false) // la demande concerne le demandeur lui-même
+  contactPhone    String?
+  thanksMessage   String? // remerciement publié à la clôture
+  requestedById   String?
+  requestedBy     User?                @relation("SolidarityRequester", fields: [requestedById], references: [id], onDelete: SetNull)
+  reviewedById    String?
+  reviewedBy      User?                @relation("SolidarityReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt      DateTime?
+  closedAt        DateTime?
+  createdAt       DateTime             @default(now())
+  donations       Donation[]
+  payouts         SolidarityPayout[]
+
+  @@index([status])
+}
+
+// Aide effectivement remise au bénéficiaire (transparence)
+model SolidarityPayout {
+  id           String         @id @default(cuid())
+  caseId       String
+  case         SolidarityCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  amount       Int
+  paidAt       DateTime
+  note         String?
+  recordedById String?
+  recordedBy   User?          @relation(fields: [recordedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime       @default(now())
 }
