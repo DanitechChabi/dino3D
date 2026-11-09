@@ -49,7 +49,6 @@ export default async function FinancesPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map(({ label, icon: Icon, total, count }) => (
           <div key={label} className="relative overflow-hidden rounded-3xl bg-night-950 p-6 text-white">
-            <div className="pointer-events-none absolute -right-8 -top-8 size-32 rounded-full bg-gold-400/20 blur-2xl" />
             <Icon className="size-5 text-gold-300" />
             <p className="mt-4 font-serif text-3xl font-semibold tabular-nums sm:text-4xl"><AnimatedNumber value={total} suffix=" F" /></p>
             <p className="mt-1 text-sm text-white/65">{label} · {count} don{count > 1 ? "s" : ""}</p>

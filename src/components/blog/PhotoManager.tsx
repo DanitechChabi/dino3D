@@ -66,7 +66,7 @@ export function PhotoManager({ postId, coverId, photos }: { postId: string; cove
           type="button"
           disabled={!!progress}
           onClick={() => input.current?.click()}
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-5 py-2.5 text-sm font-bold text-night-950 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-bold text-night-950 disabled:opacity-60"
         >
           {progress ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
           {progress ? `Envoi ${progress.done}/${progress.total}…` : "Ajouter des photos"}

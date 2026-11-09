@@ -28,7 +28,7 @@ export default async function AlbumPage(props: PageProps<"/galerie/[slug]">) {
     <>
       <CinematicHero src={cover.src} alt={cover.caption}>
         <div className="mx-auto max-w-5xl px-4 pb-14 pt-40">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold-300">
+          <p className="text-sm font-semibold text-gold-300">
             Album · {album.category} · {album.photos.length} photos
           </p>
           <SplitWords as="h1" text={album.title} className="mt-3 font-serif text-[clamp(2.2rem,6vw,4.5rem)] font-semibold leading-[1.05] text-white" />

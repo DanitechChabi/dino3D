@@ -1,24 +1,16 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Clock, MapPin, Pin } from "lucide-react";
 import { db } from "@/lib/db";
-import { church, lightVerse } from "@/content/site";
+import { church, DAYS } from "@/content/site";
 import { formatDay, serviceOccurrences } from "@/lib/time";
-import { Hero } from "@/components/motion/Hero";
+import { getSettings, mapDirections } from "@/lib/settings";
 import { Reveal } from "@/components/motion/Reveal";
-import { ScrollLightText } from "@/components/motion/ScrollLightText";
-import { GospelJourney } from "@/components/motion/GospelJourney";
-import { VerseMarquee } from "@/components/motion/VerseMarquee";
-import { Countdown } from "@/components/motion/Countdown";
-import { ScrollDove } from "@/components/motion/ScrollDove";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { PastorPortrait } from "@/components/motion/PastorPortrait";
-import { PhotoMarquee } from "@/components/gallery/PhotoMarquee";
 import { formatActivityDate } from "@/content/activities";
 import { getActivities } from "@/lib/content";
-import Image from "next/image";
-import { Lamp } from "@/components/motion/Lamp";
-import { LightParticles } from "@/components/motion/LightParticles";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { MinistryIcon } from "@/components/MinistryIcon";
 import { ChurchStats } from "@/components/ChurchStats";
@@ -29,162 +21,190 @@ import { caseTotals } from "@/lib/solidarity";
 import { WhatsappChannelButton } from "@/components/WhatsappChannelButton";
 
 export default async function HomePage() {
-  const [services, ministries, announcements, upcomingEvents, openCases, lastSermon] = await Promise.all([
+  const [services, ministries, announcements, upcomingEvents, openCases, lastSermon, settings] = await Promise.all([
     db.service.findMany({ where: { ministryId: null }, orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] }),
     db.ministry.findMany({ orderBy: { order: "asc" } }),
     db.announcement.findMany({ where: { published: true }, orderBy: [{ pinned: "desc" }, { createdAt: "desc" }], take: 3 }),
     db.event.findMany({ where: { published: true, startAt: { gte: new Date() } }, orderBy: { startAt: "asc" }, take: 3 }),
     db.solidarityCase.findMany({ where: { status: "OPEN", visibility: { not: "MEMBERS" } }, orderBy: { reviewedAt: "desc" }, take: 2 }),
     db.livestream.findFirst({ where: { status: "ENDED", published: true, url: { not: null } }, orderBy: { scheduledAt: "desc" } }),
+    getSettings(),
   ]);
   const caseSums = await caseTotals(openCases.map((c) => c.id));
 
   const week = serviceOccurrences(services, new Date(), 6);
-  const sortedActivities = await getActivities();
+  const activities = await getActivities();
+  const photos = activities.flatMap((a) => a.photos.map((p) => ({ ...p, slug: a.slug }))).slice(0, 8);
+  // Rendez-vous de chaque semaine, affichés dès l'ouverture
+  const weekly = services.filter((s) => s.weeks.length === 0);
+  const directions = mapDirections(settings);
 
   return (
     <>
-      <Hero />
+      {/* Ouverture : l'assemblée réunie */}
+      <section className="relative isolate flex min-h-[88svh] items-end overflow-hidden bg-night-950">
+        <Image
+          src="/galerie/conference-couple-2026/conference-02.jpg"
+          alt="L'assemblée de l'EBB-JR réunie au temple de Tanmey"
+          fill
+          priority
+          sizes="100vw"
+          className="-z-10 object-cover"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night-950 via-night-950/70 to-night-950/45" />
+        <div className="absolute inset-x-0 top-0 -z-10 h-32 bg-gradient-to-b from-night-950/70 to-transparent" />
+        <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-32 sm:pb-14">
+          <Reveal y={16}>
+            <p className="text-sm font-semibold text-gold-300">{church.city}, Bénin · depuis {church.foundedYear}</p>
+            <h1 className="mt-3 max-w-3xl font-serif text-[clamp(2.6rem,7vw,5rem)] font-semibold leading-[1.02] text-white">{church.name}</h1>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
+              Une famille qui prie, chante et étudie la Parole de Dieu ensemble. Vous êtes le bienvenu, tel que vous êtes.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <MagneticButton href="/cultes">Horaires des cultes</MagneticButton>
+              <MagneticButton href="/contact" variant="ghost">Nous contacter</MagneticButton>
+            </div>
+          </Reveal>
+          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-white/15 sm:grid-cols-2 lg:grid-cols-4">
+            {weekly.slice(0, 3).map((s) => (
+              <div key={s.id} className="bg-night-950/80 px-5 py-4">
+                <p className="text-sm text-white/60">{DAYS[s.dayOfWeek]}</p>
+                <p className="mt-0.5 font-semibold text-white">
+                  <span className="text-gold-300">{s.startTime.replace(":", "h")}</span> · {s.name}
+                </p>
+              </div>
+            ))}
+            <div className="bg-night-950/80 px-5 py-4">
+              <p className="text-sm text-white/60">Adresse</p>
+              {directions ? (
+                <a href={directions} target="_blank" rel="noopener noreferrer" className="mt-0.5 flex items-center gap-1.5 font-semibold text-white hover:text-gold-200">
+                  <MapPin className="size-4 shrink-0 text-gold-300" /> {settings.address}
+                </a>
+              ) : (
+                <p className="mt-0.5 flex items-center gap-1.5 font-semibold text-white"><MapPin className="size-4 shrink-0 text-gold-300" /> {settings.address}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Mot de bienvenue */}
-      <section id="bienvenue" className="relative scroll-mt-20 overflow-hidden bg-ivory py-24 sm:py-32">
-        <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <PastorPortrait name={church.pastor.name} />
+      {/* Mot du pasteur */}
+      <section id="bienvenue" className="bg-ivory py-20 sm:py-28">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-[0.8fr_1.2fr]">
+          <Reveal>
+            <PastorPortrait name={church.pastor.name} />
+          </Reveal>
           <div>
             <SectionTitle eyebrow="Mot de bienvenue" title="Une famille qui vous attend" />
-            <Reveal delay={0.1}>
-              <p className="font-serif text-2xl italic leading-relaxed text-night-800">« {church.pastor.welcome} »</p>
+            <Reveal>
+              <p className="text-xl leading-relaxed text-night-800">{church.pastor.welcome}</p>
               <p className="mt-6 font-semibold text-night-900">{church.pastor.name}</p>
-              <p className="text-sm text-gold-600">{church.pastor.title}</p>
-              <div className="mt-8">
-                <MagneticButton href="/a-propos" variant="dark">
-                  Notre histoire <ArrowRight className="ml-1 inline size-4" />
-                </MagneticButton>
-              </div>
+              <p className="text-sm text-night-800/65">{church.pastor.title}</p>
+              <Link href="/a-propos" className="mt-6 inline-flex items-center gap-1 font-bold text-gold-600 hover:text-gold-500">
+                Notre histoire <ArrowRight className="size-4" />
+              </Link>
             </Reveal>
           </div>
         </div>
-        <div className="mx-auto mt-24 max-w-5xl border-t border-gold-500/25 px-4 pt-14">
+        <div className="mx-auto mt-16 max-w-6xl border-t border-night-900/10 px-4 pt-10">
           <ChurchStats ministries={ministries.length} />
         </div>
       </section>
 
-      {/* La lumière dans les ténèbres */}
-      <section className="relative overflow-hidden bg-night-950 py-32 sm:py-44">
-        <div className="pointer-events-none absolute left-1/2 top-1/2 size-[60vmax] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-500/10 blur-3xl" />
-        <LightParticles density={35} />
-        <div className="relative mx-auto max-w-5xl px-4">
-          <ScrollLightText text={lightVerse} reference="Jean 1:5, 9" />
-        </div>
-      </section>
-
-      {/* Horaires et compte à rebours */}
-      <section className="relative bg-ivory py-24 sm:py-32">
+      {/* Programme des prochains jours */}
+      <section className="bg-parchment py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <SectionTitle eyebrow="Cette semaine à l'église" title="Venez adorer avec nous" text="Nous nous rassemblons pour louer Dieu, prier et écouter Sa Parole." />
-            <Link href="/cultes" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+            <SectionTitle eyebrow="Cette semaine" title="Venez adorer avec nous" />
+            <Link href="/cultes" className="mb-10 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
               Programme complet <ArrowRight className="size-4" />
             </Link>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {week.map(({ service: s, startAt, day }, i) => (
-              <Reveal key={s.id + day} delay={(i % 4) * 0.08}>
-                <TiltCard className="h-full rounded-3xl border border-night-900/10 bg-white p-6 shadow-[0_20px_50px_-30px_rgba(7,13,36,.4)]">
-                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-600">{formatDay(startAt, false)}</p>
-                  <p className="mt-3 font-serif text-5xl font-semibold text-night-900">{s.startTime.replace(":", "h")}</p>
-                  <h3 className="mt-3 text-lg font-bold text-night-900">{s.name}</h3>
-                  {s.description && <p className="mt-1 text-sm leading-relaxed text-night-800/70">{s.description}</p>}
-                  <p className="mt-4 flex items-center gap-1.5 text-xs text-night-800/60">
-                    <MapPin className="size-3.5" />
-                    {s.location}
-                    {s.endTime && (
-                      <>
-                        <Clock className="ml-2 size-3.5" /> jusqu&apos;à {s.endTime.replace(":", "h")}
-                      </>
-                    )}
-                  </p>
-                </TiltCard>
-              </Reveal>
+          <ul className="divide-y divide-night-900/10 rounded-2xl border border-night-900/10 bg-white">
+            {week.map(({ service: s, startAt, day }) => (
+              <li key={s.id + day} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-4">
+                <p className="w-full text-sm capitalize text-night-800/65 sm:w-44">{formatDay(startAt, false)}</p>
+                <p className="w-16 font-serif text-2xl font-semibold text-night-900">{s.startTime.replace(":", "h")}</p>
+                <p className="min-w-0 flex-1 font-semibold text-night-900">{s.name}</p>
+                <p className="flex w-full items-center gap-1 whitespace-nowrap pl-20 text-sm text-night-800/60 sm:w-auto sm:pl-0">
+                  <Clock className="size-3.5" />
+                  {s.endTime ? `jusqu'à ${s.endTime.replace(":", "h")}` : s.location}
+                </p>
+              </li>
             ))}
-          </div>
-          <Reveal className="relative mt-12 overflow-hidden rounded-[2rem] bg-night-950 px-4 py-12 sm:py-14">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_120%,rgba(212,164,60,.35),transparent)]" />
-            <div className="relative">
-              <Countdown slots={services.map(({ name, dayOfWeek, weeks, startTime }) => ({ name, dayOfWeek, weeks, startTime }))} />
-            </div>
-          </Reveal>
+          </ul>
         </div>
       </section>
 
       {upcomingEvents.length > 0 && (
-        <section className="bg-parchment py-24">
+        <section className="bg-ivory py-20 sm:py-28">
           <div className="mx-auto max-w-6xl px-4">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <SectionTitle eyebrow="Agenda" title="Prochains événements" />
-              <Link href="/evenements" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+              <Link href="/evenements" className="mb-10 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
                 Tout l&apos;agenda <ArrowRight className="size-4" />
               </Link>
             </div>
             <div className="grid gap-5 md:grid-cols-3">
-              {upcomingEvents.map((e, i) => (
-                <Reveal key={e.id} delay={i * 0.08}>
-                  <Link href={`/evenements/${e.slug}`} className="block h-full">
-                    <TiltCard className="flex h-full gap-4 rounded-3xl border border-gold-500/20 bg-white p-5">
-                      <DateBlock date={e.startAt} />
-                      <div className="min-w-0">
-                        <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-gold-600">{e.category}</p>
-                        <h3 className="mt-1 font-serif text-xl font-semibold leading-tight text-night-900">{e.title}</h3>
-                        <p className="mt-2 line-clamp-2 text-sm text-night-800/70">{e.summary}</p>
-                      </div>
-                    </TiltCard>
-                  </Link>
-                </Reveal>
+              {upcomingEvents.map((e) => (
+                <Link key={e.id} href={`/evenements/${e.slug}`} className="block h-full">
+                  <TiltCard className="flex h-full gap-4 rounded-2xl border border-night-900/10 bg-white p-5">
+                    <DateBlock date={e.startAt} />
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-gold-600">{e.category}</p>
+                      <h3 className="mt-1 font-serif text-xl font-semibold leading-tight text-night-900">{e.title}</h3>
+                      <p className="mt-2 line-clamp-2 text-sm text-night-800/70">{e.summary}</p>
+                    </div>
+                  </TiltCard>
+                </Link>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      <GospelJourney />
-
-      {/* Ministères */}
-      <section className="bg-parchment py-24 sm:py-32">
-        <ScrollDove>
-          <div className="mx-auto max-w-6xl px-4">
-            <SectionTitle eyebrow="Nos ministères" title="Chacun a sa place pour servir" text="« Comme de bons dispensateurs des diverses grâces de Dieu, que chacun de vous mette au service des autres le don qu'il a reçu. » — 1 Pierre 4:10" />
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {ministries.map((m, i) => (
-                <Reveal key={m.id} delay={(i % 3) * 0.08}>
-                  <Link href={`/ministeres/${m.slug}`} className="block h-full">
-                    <TiltCard className="h-full rounded-3xl border border-gold-500/20 bg-white/80 p-7 backdrop-blur transition-shadow hover:shadow-[0_25px_60px_-30px_rgba(179,134,42,.6)]">
-                      <span className="grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-night-800 to-night-950 text-gold-300 transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110">
-                        <MinistryIcon name={m.icon} className="size-6" />
-                      </span>
-                      <h3 className="mt-5 font-serif text-2xl font-semibold text-night-900">{m.name}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-night-800/70">{m.summary}</p>
-                      <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-gold-600">
-                        Découvrir <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </TiltCard>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
+      {/* La vie de l'église en images */}
+      <section className="bg-ivory py-20 sm:py-28">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionTitle eyebrow="La vie de l'église" title="Nos dernières activités" />
+            <Link href="/blog" className="mb-10 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+              Tout le blog <ArrowRight className="size-4" />
+            </Link>
           </div>
-        </ScrollDove>
+          <div className="grid gap-6 md:grid-cols-2">
+            {activities.slice(0, 2).map((a) => (
+              <Link key={a.slug} href={`/blog/${a.slug}`} className="group block">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-night-950">
+                  <Image src={a.photos[a.cover].src} alt={a.photos[a.cover].caption} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                </div>
+                <p className="mt-4 text-sm font-semibold text-gold-600">
+                  {a.category}
+                  {a.date && <span className="font-normal text-night-800/60"> · {formatActivityDate(a.date)}</span>}
+                </p>
+                <h3 className="mt-1 font-serif text-2xl font-semibold leading-tight text-night-900 group-hover:text-gold-600 sm:text-3xl">{a.title}</h3>
+                <p className="mt-2 line-clamp-2 text-night-800/70">{a.excerpt}</p>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-10 grid grid-cols-4 gap-2 sm:grid-cols-8">
+            {photos.map((p) => (
+              <Link key={p.src} href={`/galerie/${p.slug}`} className="relative aspect-square overflow-hidden rounded-lg bg-night-900/5">
+                <Image src={p.src} alt={p.caption} fill sizes="(max-width: 640px) 25vw, 12vw" className="object-cover transition-opacity hover:opacity-85" />
+              </Link>
+            ))}
+          </div>
+          <Link href="/galerie" className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+            Toute la galerie <ArrowRight className="size-4" />
+          </Link>
+        </div>
       </section>
-
-      <VerseMarquee />
 
       {/* Dernière prédication */}
       {lastSermon?.url && (
-        <section className="relative overflow-hidden bg-night-950 py-24 text-white">
-          <div className="pointer-events-none absolute -right-32 top-0 size-[32rem] rounded-full bg-gold-500/10 blur-3xl" />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1.3fr_1fr]">
-            <Reveal>
-              <VideoPlayer platform={lastSermon.platform} url={lastSermon.url} videoId={lastSermon.videoId} title={lastSermon.title} />
-            </Reveal>
+        <section className="bg-night-950 py-20 text-white sm:py-24">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1.3fr_1fr]">
+            <VideoPlayer platform={lastSermon.platform} url={lastSermon.url} videoId={lastSermon.videoId} title={lastSermon.title} />
             <div>
               <SectionTitle dark eyebrow="Dernière prédication" title={lastSermon.title} text={[lastSermon.preacher, lastSermon.scripture].filter(Boolean).join(" · ") || undefined} />
               <div className="flex flex-wrap gap-3">
@@ -196,62 +216,47 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* La vie de l'église en images */}
-      <section className="overflow-hidden bg-ivory py-24 sm:py-32">
+      {/* Ministères */}
+      <section className="bg-parchment py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <SectionTitle eyebrow="La vie de l'église" title="Nos dernières activités" />
-            <Link href="/blog" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
-              Tout le blog <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2">
-            {sortedActivities.slice(0, 2).map((a, i) => (
-              <Reveal key={a.slug} delay={i * 0.1}>
-                <Link href={`/blog/${a.slug}`} className="group relative block aspect-[4/3] overflow-hidden rounded-[2rem] bg-night-950">
-                  <Image src={a.photos[a.cover].src} alt={a.photos[a.cover].caption} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition-transform duration-[2s] group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/30 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-300">
-                      {a.category}
-                      {a.date && <span className="normal-case tracking-normal"> · {formatActivityDate(a.date)}</span>}
-                    </p>
-                    <h3 className="mt-2 font-serif text-2xl font-semibold leading-tight text-white sm:text-3xl">{a.title}</h3>
-                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-gold-200">
-                      Lire le récit <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </div>
-                </Link>
-              </Reveal>
+          <SectionTitle eyebrow="Nos ministères" title="Chacun a sa place pour servir" text="« Que chacun de vous mette au service des autres le don qu'il a reçu. » — 1 Pierre 4:10" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {ministries.map((m) => (
+              <Link key={m.id} href={`/ministeres/${m.slug}`} className="block h-full">
+                <TiltCard className="flex h-full gap-4 rounded-2xl border border-night-900/10 bg-white p-5">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-night-900 text-gold-300">
+                    <MinistryIcon name={m.icon} className="size-5" />
+                  </span>
+                  <span>
+                    <span className="block font-serif text-xl font-semibold text-night-900 group-hover:text-gold-600">{m.name}</span>
+                    <span className="mt-1 block text-sm leading-relaxed text-night-800/70">{m.summary}</span>
+                  </span>
+                </TiltCard>
+              </Link>
             ))}
           </div>
-        </div>
-        <div className="mt-14">
-          <PhotoMarquee photos={sortedActivities.flatMap((a) => a.photos).slice(0, 16)} href="/galerie" />
         </div>
       </section>
 
       {/* Solidarité */}
       {openCases.length > 0 && (
-        <section className="bg-parchment py-24">
+        <section className="bg-ivory py-20 sm:py-28">
           <div className="mx-auto max-w-6xl px-4">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <SectionTitle eyebrow="Solidarité" title="Portons ensemble les fardeaux" text="« Portez les fardeaux les uns des autres. » — Galates 6:2" />
-              <Link href="/solidarite" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+              <Link href="/solidarite" className="mb-10 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
                 Toutes les collectes <ArrowRight className="size-4" />
               </Link>
             </div>
             <div className="grid gap-5 md:grid-cols-2">
-              {openCases.map((c, i) => (
-                <Reveal key={c.id} delay={i * 0.08}>
-                  <Link href={`/solidarite/${c.slug}`} className="block h-full">
-                    <TiltCard className="h-full rounded-3xl bg-night-950 p-7 text-white">
-                      <span className="rounded-full bg-gold-300/20 px-3 py-1 text-xs font-bold text-gold-200">{c.reason}</span>
-                      <h3 className="mt-4 font-serif text-2xl font-semibold">{c.title}</h3>
-                      <div className="mt-6"><ProgressBar raised={caseSums.get(c.id)?.raised ?? 0} goal={c.goal} dark /></div>
-                    </TiltCard>
-                  </Link>
-                </Reveal>
+              {openCases.map((c) => (
+                <Link key={c.id} href={`/solidarite/${c.slug}`} className="block h-full">
+                  <TiltCard className="h-full rounded-2xl border border-night-900/10 bg-white p-6">
+                    <span className="text-sm font-semibold text-gold-600">{c.reason}</span>
+                    <h3 className="mt-1 font-serif text-2xl font-semibold text-night-900">{c.title}</h3>
+                    <div className="mt-5"><ProgressBar raised={caseSums.get(c.id)?.raised ?? 0} goal={c.goal} /></div>
+                  </TiltCard>
+                </Link>
               ))}
             </div>
           </div>
@@ -260,49 +265,48 @@ export default async function HomePage() {
 
       {/* Annonces */}
       {announcements.length > 0 && (
-        <section className="bg-ivory py-24 sm:py-32">
+        <section className="bg-ivory py-20 sm:py-28">
           <div className="mx-auto max-w-6xl px-4">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <SectionTitle eyebrow="Vie de l'église" title="Dernières annonces" />
-              <Link href="/annonces" className="mb-12 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
+              <Link href="/annonces" className="mb-10 inline-flex items-center gap-1 text-sm font-bold text-gold-600 hover:text-gold-500">
                 Toutes les annonces <ArrowRight className="size-4" />
               </Link>
             </div>
             <div className="grid gap-5 md:grid-cols-3">
-              {announcements.map((a, i) => (
-                <Reveal key={a.id} delay={i * 0.08}>
-                  <article className="h-full rounded-3xl border border-night-900/10 bg-white p-7">
-                    <p className="flex items-center gap-2 text-xs font-semibold text-night-800/60">
-                      {a.pinned && <Pin className="size-3.5 text-gold-600" />}
-                      {a.createdAt.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                    </p>
-                    <h3 className="mt-3 font-serif text-2xl font-semibold text-night-900">{a.title}</h3>
-                    <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-night-800/75">{a.body}</p>
-                  </article>
-                </Reveal>
+              {announcements.map((a) => (
+                <article key={a.id} className="h-full rounded-2xl border border-night-900/10 bg-white p-6">
+                  <p className="flex items-center gap-2 text-sm text-night-800/60">
+                    {a.pinned && <Pin className="size-3.5 text-gold-600" />}
+                    {a.createdAt.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                  </p>
+                  <h3 className="mt-2 font-serif text-2xl font-semibold text-night-900">{a.title}</h3>
+                  <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-night-800/75">{a.body}</p>
+                </article>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* Appel : veillez */}
-      <section className="relative overflow-hidden bg-night-950 py-28 text-center sm:py-36">
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-[radial-gradient(60%_60%_at_50%_100%,rgba(248,210,106,.22),transparent)]" />
-        <div className="relative mx-auto max-w-3xl px-4">
-          <div className="mb-10 flex items-end justify-center gap-6 sm:gap-10">
-            {[0, 0.5, 1, 0.3, 0.8].map((d, i) => (
-              <Lamp key={i} delay={d} className={`${i === 2 ? "h-24 sm:h-28" : "h-16 sm:h-20"} w-auto ${i % 4 === 0 ? "hidden sm:block" : ""}`} />
-            ))}
+      {/* Nous rendre visite */}
+      <section className="bg-night-950 py-20 text-white sm:py-24">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-[1.2fr_1fr] md:items-center">
+          <div>
+            <h2 className="font-serif text-4xl font-semibold leading-tight sm:text-5xl">Venez nous rendre visite</h2>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-white/70">
+              Le culte a lieu chaque dimanche. Vous pouvez aussi nous confier un sujet de prière ou parler avec le pasteur.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <MagneticButton href="/contact?priere=1">Demander la prière</MagneticButton>
+              <MagneticButton href="/inscription" variant="ghost">Rejoindre la famille</MagneticButton>
+            </div>
           </div>
-          <SectionTitle dark center eyebrow="Matthieu 25:13" title="Veillez, car vous ne savez ni le jour, ni l'heure" text="Gardons nos lampes allumées. Venez nous rejoindre, confiez-nous un sujet de prière, ou prenez contact avec le pasteur." />
-          <Reveal className="flex flex-wrap justify-center gap-3">
-            <MagneticButton href="/contact?priere=1">Demander la prière</MagneticButton>
-            <MagneticButton href="/inscription" variant="ghost">Rejoindre la famille</MagneticButton>
-          </Reveal>
-          <Reveal delay={0.15} className="mt-6 flex justify-center">
-            <WhatsappChannelButton />
-          </Reveal>
+          <div className="space-y-2 md:justify-self-end">
+            <p className="text-sm text-white/60">Pour nous joindre</p>
+            <a href={`tel:${church.phone.replace(/\s/g, "")}`} className="block font-serif text-3xl font-semibold hover:text-gold-200">{church.phone}</a>
+            <div className="pt-3"><WhatsappChannelButton /></div>
+          </div>
         </div>
       </section>
     </>

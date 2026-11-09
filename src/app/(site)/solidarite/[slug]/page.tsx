@@ -8,7 +8,6 @@ import { getProvider } from "@/lib/payments";
 import { beneficiaryLabel, canReview, caseTotals, isAcceptingGifts, VISIBILITY_LABELS } from "@/lib/solidarity";
 import { formatXOF } from "@/lib/money";
 import { formatDay } from "@/lib/time";
-import { LightParticles } from "@/components/motion/LightParticles";
 import { SplitWords } from "@/components/motion/SplitWords";
 import { Reveal } from "@/components/motion/Reveal";
 import { ProgressRing } from "@/components/solidarity/Progress";
@@ -49,10 +48,9 @@ export default async function CasePage(props: PageProps<"/solidarite/[slug]">) {
     <>
       <section className="relative overflow-hidden bg-night-950 pb-16 pt-36 text-white sm:pt-44">
         <div className="absolute inset-0 bg-[radial-gradient(80%_70%_at_70%_30%,#22326b_0%,#070d24_60%,#04081a_100%)]" />
-        <LightParticles density={40} />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <p className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-gold-400">
+            <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-gold-400">
               Solidarité · {c.reason}
               {c.visibility !== "PUBLIC" && <span className="rounded-full bg-white/10 px-2 py-0.5 normal-case tracking-normal text-white/70">{VISIBILITY_LABELS[c.visibility]}</span>}
             </p>

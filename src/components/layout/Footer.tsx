@@ -6,7 +6,7 @@ import { church, footerNav, DAYS } from "@/content/site";
 import { db } from "@/lib/db";
 import { getSettings, mapDirections } from "@/lib/settings";
 import { FacebookIcon } from "@/components/FacebookIcon";
-import { AnimatedLogo } from "../motion/AnimatedLogo";
+import { LogoMark } from "./Logo";
 
 export async function Footer() {
   const settings = await getSettings();
@@ -15,16 +15,15 @@ export async function Footer() {
 
   return (
     <footer className="relative overflow-hidden bg-night-950 text-white/75">
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[80vw] -translate-x-1/2 rounded-full bg-gold-500/10 blur-3xl" />
       <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <AnimatedLogo className="size-32" />
+          <LogoMark className="size-16" />
           <p className="mt-5 font-serif text-xl font-semibold leading-tight text-white">{church.name}</p>
           <p className="mt-4 text-sm leading-relaxed">« Oui, je viens bientôt. Amen ! Viens, Seigneur Jésus ! » <br />— Apocalypse 22:20</p>
         </div>
         <div>
-          <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Navigation</h3>
-          <ul className="space-y-2 text-sm">
+          <h3 className="mb-4 text-sm font-semibold text-gold-400">Navigation</h3>
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-1">
             {footerNav.map((n) => (
               <li key={n.href}>
                 <Link href={n.href} className="transition hover:text-gold-200">{n.label}</Link>
@@ -33,7 +32,7 @@ export async function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Nos rendez-vous</h3>
+          <h3 className="mb-4 text-sm font-semibold text-gold-400">Nos rendez-vous</h3>
           <ul className="space-y-2 text-sm">
             {services.map((s) => (
               <li key={s.id}>
@@ -46,7 +45,7 @@ export async function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Contact</h3>
+          <h3 className="mb-4 text-sm font-semibold text-gold-400">Contact</h3>
           <ul className="space-y-3 text-sm">
             <li>
               {directions ? (
@@ -83,7 +82,7 @@ export async function Footer() {
         </div>
       </div>
       <div className="relative border-t border-white/10 py-6 text-center text-xs text-white/50">
-        © {new Date().getFullYear()} {church.name} — {church.city}. Soli Deo Gloria.
+        © {new Date().getFullYear()} {church.name} — {church.city}.
       </div>
     </footer>
   );

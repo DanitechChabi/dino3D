@@ -5,7 +5,6 @@ import { db } from "@/lib/db";
 import { currentLive, nextLive } from "@/lib/lives";
 import { formatDay, formatTime } from "@/lib/time";
 import { getSettings } from "@/lib/settings";
-import { LightParticles } from "@/components/motion/LightParticles";
 import { Reveal } from "@/components/motion/Reveal";
 import { VideoPlayer } from "@/components/live/VideoPlayer";
 import { SermonCard } from "@/components/live/SermonCard";
@@ -28,7 +27,6 @@ export default async function LivePage() {
     <>
       <section className="relative overflow-hidden bg-night-950 pb-16 pt-32 text-white sm:pt-40">
         <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_0%,#22326b_0%,#070d24_60%,#04081a_100%)]" />
-        <LightParticles density={40} />
         <div className="relative mx-auto max-w-5xl px-4">
           {live && live.url ? (
             <>
@@ -42,7 +40,7 @@ export default async function LivePage() {
                   {live.preacher && <>Prédicateur : <strong className="text-white">{live.preacher}</strong></>}
                   {live.scripture && <> · {live.scripture}</>}
                 </p>
-                <Link href="/donner?type=quete" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-6 py-3 font-bold text-night-950">
+                <Link href="/donner?type=quete" className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3 font-bold text-night-950">
                   <HandHeart className="size-4" /> Donner pendant le culte
                 </Link>
               </div>
@@ -50,7 +48,7 @@ export default async function LivePage() {
           ) : next ? (
             <div className="text-center">
               <Radio className="mx-auto size-10 text-gold-300" />
-              <p className="mt-4 text-xs font-bold uppercase tracking-[0.3em] text-gold-400">Prochain direct</p>
+              <p className="mt-4 text-sm font-semibold text-gold-400">Prochain direct</p>
               <h1 className="mt-3 font-serif text-4xl font-semibold sm:text-6xl">{next.title}</h1>
               <p className="mt-3 flex items-center justify-center gap-2 text-white/70"><CalendarDays className="size-4 text-gold-300" /> {formatDay(next.scheduledAt)} à {formatTime(next.scheduledAt)}</p>
               <div className="mt-8 flex justify-center"><EventCountdown start={next.scheduledAt.toISOString()} /></div>

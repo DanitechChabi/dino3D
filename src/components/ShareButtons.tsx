@@ -10,7 +10,7 @@ export function ShareButtons({ title }: { title: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="mr-1 text-xs font-bold uppercase tracking-[0.2em] text-night-800/60">Partager</span>
+      <span className="mr-1 text-sm font-semibold text-night-800/60">Partager</span>
       <button
         onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`${title} — ${url()}`)}`, "_blank", "noopener")}
         className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366] px-4 py-2 text-sm font-bold text-white hover:brightness-105"

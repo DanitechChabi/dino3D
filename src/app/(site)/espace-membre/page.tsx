@@ -65,7 +65,6 @@ export default async function MemberPage() {
           {isBirthdayToday(user.birthDate) && (
             <Reveal className="mb-8">
               <div className="relative overflow-hidden rounded-3xl bg-night-950 p-7 text-white sm:p-9">
-                <div className="pointer-events-none absolute -right-10 -top-10 size-48 rounded-full bg-gold-400/25 blur-3xl" />
                 <Cake className="size-9 text-gold-300" />
                 <p className="mt-4 font-serif text-3xl font-semibold sm:text-4xl">Joyeux anniversaire, {user.firstName} !</p>
                 <p className="mt-3 max-w-2xl text-white/75">« Que l&apos;Éternel te bénisse et qu&apos;il te garde ! Que l&apos;Éternel fasse luire sa face sur toi et qu&apos;il t&apos;accorde sa grâce ! » — Nombres 6:24-25</p>
@@ -187,7 +186,7 @@ export default async function MemberPage() {
                     </ul>
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">
-                    <Link href="/donner" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-5 py-2.5 text-sm font-bold text-night-950">
+                    <Link href="/donner" className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-bold text-night-950">
                       <HandCoins className="size-4" /> Faire un don
                     </Link>
                     <Link href="/solidarite/demande" className="inline-flex items-center rounded-full border border-night-900/15 px-4 py-2.5 text-sm font-bold text-night-900 hover:border-gold-400">

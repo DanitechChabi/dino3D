@@ -54,7 +54,7 @@ export function VideoPlayer({
           )}
           <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <motion.span className="absolute inset-0 rounded-full bg-gold-300/50" animate={{ scale: [1, 1.6], opacity: [0.6, 0] }} transition={{ duration: 1.8, repeat: Infinity }} />
-            <span className="relative grid size-20 place-items-center rounded-full bg-gradient-to-br from-gold-300 to-gold-600 text-night-950 shadow-2xl transition-transform group-hover:scale-110">
+            <span className="relative grid size-20 place-items-center rounded-full bg-gold-500 text-night-950 shadow-2xl transition-transform group-hover:scale-110">
               <Play className="ml-1 size-8 fill-current" />
             </span>
           </span>

@@ -38,7 +38,7 @@ export default async function MinistryPage(props: PageProps<"/ministeres/[slug]"
           </Reveal>
           {ministry.members.length > 0 && (
             <Reveal delay={0.1} className="mt-10 rounded-3xl border border-gold-500/20 bg-white p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-600">Responsable{ministry.members.length > 1 ? "s" : ""}</p>
+              <p className="text-sm font-semibold text-gold-600">Responsable{ministry.members.length > 1 ? "s" : ""}</p>
               <p className="mt-2 font-serif text-2xl text-night-900">
                 {ministry.members.map((m) => `${m.user.firstName} ${m.user.lastName}`).join(", ")}
               </p>
@@ -46,7 +46,7 @@ export default async function MinistryPage(props: PageProps<"/ministeres/[slug]"
           )}
           {ministry.services.length > 0 && (
             <Reveal delay={0.1} className="mt-10 overflow-hidden rounded-3xl bg-night-950 p-6 text-white sm:p-8">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-400">Horaires</p>
+              <p className="text-sm font-semibold text-gold-400">Horaires</p>
               <ul className="mt-4 divide-y divide-white/10">
                 {ministry.services.map((s) => (
                   <li key={s.id} className="flex flex-wrap items-baseline justify-between gap-2 py-3">

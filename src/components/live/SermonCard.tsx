@@ -19,7 +19,7 @@ export function SermonCard({ sermon }: { sermon: { slug: string; title: string; 
           <BookOpen className="size-4" />
         </span>
       </div>
-      {sermon.series && <p className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-gold-600">{sermon.series}</p>}
+      {sermon.series && <p className="mt-3 text-sm font-semibold text-gold-600">{sermon.series}</p>}
       <h3 className="mt-1 font-serif text-xl font-semibold leading-tight text-night-900 group-hover:text-gold-600">{sermon.title}</h3>
       <p className="mt-1 text-sm text-night-800/60">
         {sermon.preacher && `${sermon.preacher} · `}

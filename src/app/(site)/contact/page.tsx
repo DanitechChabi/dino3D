@@ -40,7 +40,7 @@ export default async function ContactPage(props: PageProps<"/contact">) {
               <div key={label} className="flex items-start gap-4 rounded-3xl border border-night-900/10 bg-white p-5">
                 <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-night-950 text-gold-300"><Icon className="size-5" /></span>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-600">{label}</p>
+                  <p className="text-sm font-semibold text-gold-600">{label}</p>
                   {href ? <a href={href} className="font-semibold text-night-900 hover:text-gold-600">{value}</a> : <p className="font-semibold text-night-900">{value}</p>}
                 </div>
               </div>

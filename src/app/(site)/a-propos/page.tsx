@@ -4,8 +4,6 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { Reveal } from "@/components/motion/Reveal";
 import { Timeline } from "@/components/motion/Timeline";
-import { TiltCard } from "@/components/motion/TiltCard";
-import { CrossGlyph } from "@/components/motion/CrossGlyph";
 import { church, confession, history, team, vision } from "@/content/site";
 import { db } from "@/lib/db";
 import { ChurchStats } from "@/components/ChurchStats";
@@ -25,10 +23,10 @@ export default async function AboutPage() {
 
       <section className="py-24">
         <div className="mx-auto max-w-6xl px-4">
-          <SectionTitle center eyebrow={`Notre histoire depuis ${church.foundedYear}`} title="Ce que Dieu a fait au milieu de nous" text="« Jusqu'ici l'Éternel nous a secourus. » — 1 Samuel 7:12" />
+          <SectionTitle eyebrow={`Notre histoire depuis ${church.foundedYear}`} title="Ce que Dieu a fait au milieu de nous" text="« Jusqu'ici l'Éternel nous a secourus. » — 1 Samuel 7:12" />
           <Timeline items={history} />
-          <div className="mx-auto mt-20 max-w-5xl rounded-[2rem] bg-night-950 px-4 py-12">
-            <ChurchStats ministries={ministries} dark />
+          <div className="mt-16 border-t border-night-900/10 pt-10">
+            <ChurchStats ministries={ministries} />
           </div>
         </div>
       </section>
@@ -48,15 +46,13 @@ export default async function AboutPage() {
       )}
 
       <section className="relative overflow-hidden bg-night-950 py-24 text-white">
-        <div className="pointer-events-none absolute -right-40 top-0 size-[40rem] rounded-full bg-gold-500/10 blur-3xl" />
         <div className="relative mx-auto max-w-6xl px-4">
           <SectionTitle dark eyebrow="Vision & mission" title={vision.vision} />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {vision.mission.map((m, i) => (
               <Reveal key={m.title} delay={i * 0.1}>
-                <div className="h-full rounded-3xl border border-white/10 bg-white/[0.04] p-7">
-                  <span className="font-serif text-5xl text-gold-400/40">0{i + 1}</span>
-                  <h3 className="mt-3 font-serif text-2xl font-semibold text-gold-200">{m.title}</h3>
+                <div className="h-full border-t border-white/15 pt-5">
+                  <h3 className="font-serif text-2xl font-semibold text-gold-200">{m.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-white/70">{m.text}</p>
                 </div>
               </Reveal>
@@ -67,16 +63,16 @@ export default async function AboutPage() {
 
       <section id="confession" className="bg-parchment py-24">
         <div className="mx-auto max-w-4xl px-4">
-          <SectionTitle center eyebrow="Confession de foi" title="Ce que nous croyons" text="Nous croyons et enseignons ce que la Bible enseigne." />
+          <SectionTitle eyebrow="Confession de foi" title="Ce que nous croyons" text="Nous croyons et enseignons ce que la Bible enseigne." />
           <ol className="space-y-4">
             {confession.map((c, i) => (
               <Reveal key={c.title} delay={0.05}>
-                <li className="group flex gap-5 rounded-3xl border border-gold-500/20 bg-white/70 p-6 transition hover:bg-white sm:p-8">
-                  <span className="font-serif text-4xl font-semibold text-gold-500 transition-transform duration-500 group-hover:scale-110">{String(i + 1).padStart(2, "0")}</span>
+                <li className="flex gap-4 border-b border-night-900/10 pb-5">
+                  <span className="pt-1 font-serif text-2xl font-semibold text-gold-600">{i + 1}.</span>
                   <div>
                     <h3 className="font-serif text-2xl font-semibold text-night-900">{c.title}</h3>
                     <p className="mt-1 leading-relaxed text-night-800/75">{c.text}</p>
-                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-gold-600">{c.ref}</p>
+                    <p className="mt-2 text-sm font-semibold text-gold-600">{c.ref}</p>
                   </div>
                 </li>
               </Reveal>
@@ -87,24 +83,20 @@ export default async function AboutPage() {
 
       <section className="py-24">
         <div className="mx-auto max-w-6xl px-4">
-          <SectionTitle center eyebrow="Nos serviteurs" title="Pasteurs & responsables" />
+          <SectionTitle eyebrow="Nos serviteurs" title="Pasteurs & responsables" />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {team.map((t, i) => (
-              <Reveal key={i} delay={i * 0.08}>
-                <TiltCard className="rounded-3xl border border-night-900/10 bg-white p-4 text-center">
-                  <div className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl bg-gradient-to-b from-night-700 to-night-950">
-                    {t.photo ? (
-                      <>
-                        <div className="absolute left-1/2 top-1/3 size-40 -translate-x-1/2 rounded-full bg-gold-300/30 blur-2xl" />
-                        <Image src={t.photo} alt={t.name} fill sizes="(max-width: 640px) 90vw, 25vw" className="object-cover object-top transition-transform duration-700 group-hover:scale-105" />
-                      </>
-                    ) : (
-                      <CrossGlyph className="h-20 w-auto opacity-80" delay={0.2 + i * 0.2} />
-                    )}
+            {/* Seuls les serviteurs dont le nom est connu sont affichés */}
+            {team.filter((t) => !/compléter/i.test(t.name)).map((t) => (
+              <Reveal key={t.name}>
+                <figure>
+                  <div className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-b from-night-700 to-night-950">
+                    {t.photo && <Image src={t.photo} alt={t.name} fill sizes="(max-width: 640px) 90vw, 25vw" className="object-cover object-top" />}
                   </div>
-                  <h3 className="mt-4 font-serif text-xl font-semibold text-night-900">{t.name}</h3>
-                  <p className="mb-2 text-sm text-gold-600">{t.role}</p>
-                </TiltCard>
+                  <figcaption className="mt-3">
+                    <span className="block font-serif text-xl font-semibold text-night-900">{t.name}</span>
+                    <span className="text-sm text-night-800/65">{t.role}</span>
+                  </figcaption>
+                </figure>
               </Reveal>
             ))}
           </div>

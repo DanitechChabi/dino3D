@@ -1,6 +1,5 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Preloader } from "@/components/motion/Preloader";
 import { currentLive } from "@/lib/lives";
 import { LiveBadge } from "@/components/live/LiveBadge";
 
@@ -12,7 +11,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const live = await currentLive();
   return (
     <>
-      <Preloader />
       <Header />
       <main>{children}</main>
       <Footer />

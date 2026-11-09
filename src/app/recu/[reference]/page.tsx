@@ -32,7 +32,6 @@ export default async function ReceiptPage(props: PageProps<"/recu/[reference]">)
           <PrintButton />
         </div>
         <article className="relative overflow-hidden rounded-3xl border border-gold-500/30 bg-white p-8 shadow-xl print:rounded-none print:border-0 print:shadow-none sm:p-10">
-          <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-gold-300/20 blur-2xl print:hidden" />
           <header className="relative flex items-center gap-4 border-b border-night-900/10 pb-6">
             <Image src="/brand/logo-ebb-jr-192.png" alt="" width={72} height={72} className="rounded-full" />
             <div>

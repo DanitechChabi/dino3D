@@ -7,7 +7,7 @@ export const church = {
   city: "Tanmey",
   tagline: "Jésus revient — préparez-vous à Sa rencontre",
   // Adresse, carte, WhatsApp et réseaux : modifiables dans Administration → Paramètres
-  address: "Tanmey — adresse exacte à compléter",
+  address: "Tanmey, Bénin",
   phone: "01 97 60 97 49",
   assistancePhone: "01 53 73 62 65",
   whatsapp: "", // À COMPLÉTER : numéro au format international sans « + », ex. 22900000000

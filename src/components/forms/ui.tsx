@@ -11,7 +11,7 @@ export function SubmitButton({ children, className = "" }: { children: React.Rea
     <button
       type="submit"
       disabled={pending}
-      className={`inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 px-6 py-3 text-sm font-bold text-night-950 shadow-[0_10px_30px_-10px_rgba(212,164,60,.8)] transition hover:brightness-105 active:scale-[.98] disabled:opacity-60 ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full bg-gold-500 px-6 py-3 text-sm font-bold text-night-950 transition hover:brightness-105 active:scale-[.98] disabled:opacity-60 ${className}`}
     >
       {pending && <Loader2 className="size-4 animate-spin" />}
       {children}

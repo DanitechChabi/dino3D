@@ -41,7 +41,7 @@ function Digit({ value, label }: { value: number; label: string }) {
           </motion.span>
         </AnimatePresence>
       </div>
-      <span className="mt-2 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/60">{label}</span>
+      <span className="mt-2 text-xs text-white/60">{label}</span>
     </div>
   );
 }
@@ -70,7 +70,7 @@ export function Countdown({ slots }: { slots: Slot[] }) {
 
   return (
     <div className="flex flex-col items-center text-center">
-      <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold-400">Prochain rendez-vous</p>
+      <p className="text-sm font-semibold text-gold-400">Prochain rendez-vous</p>
       <p className="mt-2 min-h-9 font-serif text-2xl text-white sm:text-3xl">
         {next ? `${next.slot.name} · ${next.at.toLocaleDateString("fr-FR", { weekday: "long" })} à ${next.slot.startTime.replace(":", "h")}` : " "}
       </p>

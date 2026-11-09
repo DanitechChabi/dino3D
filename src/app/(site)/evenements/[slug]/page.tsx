@@ -8,7 +8,6 @@ import { getCurrentUser } from "@/lib/dal";
 import { parseProgram } from "@/lib/events";
 import { formatDay, formatTime } from "@/lib/time";
 import { googleCalendarUrl } from "@/lib/ics";
-import { LightParticles } from "@/components/motion/LightParticles";
 import { SplitWords } from "@/components/motion/SplitWords";
 import { Reveal } from "@/components/motion/Reveal";
 import { EventCountdown } from "@/components/events/EventCountdown";
@@ -41,9 +40,8 @@ export default async function EventPage(props: PageProps<"/evenements/[slug]">) 
       <section className="relative overflow-hidden bg-night-950 pb-16 pt-36 text-white sm:pt-44">
         {event.coverUrl && <Image src={event.coverUrl} alt="" fill priority sizes="100vw" className="object-cover opacity-35" />}
         <div className="absolute inset-0 bg-gradient-to-b from-night-950/70 via-night-950/60 to-night-950" />
-        <LightParticles density={40} />
         <div className="relative mx-auto max-w-5xl px-4">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold-400">{event.category}</p>
+          <p className="text-sm font-semibold text-gold-400">{event.category}</p>
           <SplitWords as="h1" text={event.title} className="mt-3 font-serif text-[clamp(2.3rem,6.5vw,4.5rem)] font-semibold leading-[1.03]" />
           <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-white/80">
             <span className="flex items-center gap-2"><CalendarDays className="size-4 text-gold-300" /> {formatDay(event.startAt)}</span>

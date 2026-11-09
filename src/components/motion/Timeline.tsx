@@ -18,9 +18,9 @@ export function Timeline({ items }: { items: Item[] }) {
       <motion.div style={{ scaleY }} className="absolute bottom-0 left-3 top-0 w-px origin-top bg-gradient-to-b from-gold-300 via-gold-500 to-gold-600 sm:left-1/2" />
       {items.map((item, i) => (
         <li key={i} className={`relative mb-14 last:mb-0 sm:w-1/2 ${i % 2 ? "sm:ml-auto sm:pl-12" : "sm:pr-12 sm:text-right"}`}>
-          <span className={`absolute top-2 -left-[2.05rem] size-4 rounded-full border-2 border-gold-500 bg-ivory shadow-[0_0_0_6px_rgba(212,164,60,.15)] ${i % 2 ? "sm:-left-2" : "sm:left-auto sm:-right-2"}`} />
+          <span className={`absolute top-2 -left-[2.05rem] size-4 rounded-full border-2 border-gold-500 bg-ivory ${i % 2 ? "sm:-left-2" : "sm:left-auto sm:-right-2"}`} />
           <Reveal delay={0.05}>
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-600">{item.year}</p>
+            <p className="text-sm font-semibold text-gold-600">{item.year}</p>
             <h3 className="mt-1 font-serif text-2xl font-semibold text-night-900">{item.title}</h3>
             <p className="mt-2 leading-relaxed text-night-800/75">{item.text}</p>
           </Reveal>

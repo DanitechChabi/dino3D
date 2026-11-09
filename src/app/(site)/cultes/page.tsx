@@ -25,7 +25,7 @@ export default async function ServicesPage() {
 
       <section className="py-24">
         <div className="mx-auto max-w-4xl px-4">
-          <SectionTitle center eyebrow="Programme de l'église" title="Nos rendez-vous" text="Certains rendez-vous n'ont lieu que certaines semaines du mois : leur fréquence est indiquée en doré." />
+          <SectionTitle eyebrow="Programme de l'église" title="Nos rendez-vous" text="Certains rendez-vous n'ont lieu que certaines semaines du mois : leur fréquence est indiquée en doré." />
           <div className="space-y-8">
             {byDay.map(({ day, items }, i) => (
               <Reveal key={day} delay={i * 0.05}>
@@ -33,21 +33,25 @@ export default async function ServicesPage() {
                   <h3 className="font-serif text-3xl font-semibold text-gold-600">{day}</h3>
                   <div className="space-y-3">
                     {items.map((s) => (
-                      <div key={s.id} className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-night-900/10 bg-white p-5">
-                        <p className="font-serif text-3xl font-semibold text-night-900">{s.startTime.replace(":", "h")}</p>
+                      <div key={s.id} className="flex gap-4 rounded-2xl border border-night-900/10 bg-white p-5">
+                        <p className="w-[4.5rem] shrink-0 font-serif text-3xl font-semibold leading-none text-night-900">{s.startTime.replace(":", "h")}</p>
                         <div className="min-w-0 flex-1">
                           <p className="font-bold text-night-900">{s.name}</p>
-                          {s.ministry && (
-                            <Link href={`/ministeres/${s.ministry.slug}`} className="mr-1.5 mt-0.5 inline-block rounded-full bg-night-950 px-2.5 py-0.5 text-xs font-bold text-gold-200">{s.ministry.name}</Link>
+                          {(s.ministry || s.weeks.length > 0) && (
+                            <p className="mt-1 flex flex-wrap gap-1.5">
+                              {s.ministry && (
+                                <Link href={`/ministeres/${s.ministry.slug}`} className="rounded-full bg-night-950 px-2.5 py-0.5 text-xs font-bold text-gold-200">{s.ministry.name}</Link>
+                              )}
+                              {s.weeks.length > 0 && (
+                                <span className="rounded-full bg-gold-300/30 px-2.5 py-0.5 text-xs font-bold text-gold-600">{recurrenceLabel(s.dayOfWeek, s.weeks)}</span>
+                              )}
+                            </p>
                           )}
-                          {s.weeks.length > 0 && (
-                            <p className="mt-0.5 inline-block rounded-full bg-gold-300/30 px-2.5 py-0.5 text-xs font-bold text-gold-600">{recurrenceLabel(s.dayOfWeek, s.weeks)}</p>
-                          )}
-                          {s.description && <p className="text-sm text-night-800/70">{s.description}</p>}
-                        </div>
-                        <div className="text-xs text-night-800/60">
-                          <p className="flex items-center gap-1"><MapPin className="size-3.5" />{s.location}</p>
-                          {s.endTime && <p className="mt-1 flex items-center gap-1"><Clock className="size-3.5" />jusqu&apos;à {s.endTime.replace(":", "h")}</p>}
+                          {s.description && <p className="mt-1 text-sm text-night-800/70">{s.description}</p>}
+                          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-night-800/60">
+                            <span className="inline-flex items-center gap-1"><MapPin className="size-3.5" />{s.location}</span>
+                            {s.endTime && <span className="inline-flex items-center gap-1"><Clock className="size-3.5" />jusqu&apos;à {s.endTime.replace(":", "h")}</span>}
+                          </p>
                         </div>
                       </div>
                     ))}

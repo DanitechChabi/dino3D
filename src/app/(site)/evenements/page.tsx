@@ -56,10 +56,9 @@ export default async function EventsPage() {
 
       {/* Rappels */}
       <section className="relative overflow-hidden bg-night-950 py-16 text-white">
-        <div className="pointer-events-none absolute -right-20 -top-20 size-96 rounded-full bg-gold-500/15 blur-3xl" />
         <div className="relative mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-2">
           <Reveal>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold-400">Ne manquez plus rien</p>
+            <p className="text-sm font-semibold text-gold-400">Ne manquez plus rien</p>
             <h2 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">Recevez les rappels sur votre téléphone</h2>
             <p className="mt-3 text-white/70">La veille et une heure avant chaque culte, réunion ou événement.</p>
             <div className="mt-6">
@@ -67,7 +66,7 @@ export default async function EventsPage() {
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold-400">Ou dans votre agenda</p>
+            <p className="text-sm font-semibold text-gold-400">Ou dans votre agenda</p>
             <h2 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">Synchronisez le calendrier</h2>
             <p className="mt-3 text-white/70">Tous nos rendez-vous s&apos;ajoutent à l&apos;agenda de votre téléphone et se mettent à jour automatiquement, avec une alarme intégrée.</p>
             <div className="mt-6">
@@ -94,7 +93,7 @@ export default async function EventsPage() {
                       {e.coverUrl && <Image src={e.coverUrl} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover opacity-80 transition-transform duration-[1.6s] group-hover:scale-110" />}
                       <div className="absolute inset-0 bg-gradient-to-t from-night-950 to-transparent" />
                       <div className="absolute left-5 top-5"><DateBlock date={e.startAt} /></div>
-                      <span className="absolute right-5 top-5 rounded-full bg-gold-300 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-night-950">{e.category}</span>
+                      <span className="absolute right-5 top-5 rounded-full bg-gold-300 px-3 py-1 text-sm font-semibold text-night-950">{e.category}</span>
                     </div>
                     <div className="flex flex-1 flex-col p-6">
                       <h3 className="font-serif text-2xl font-semibold leading-tight">{e.title}</h3>

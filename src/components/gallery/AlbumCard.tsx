@@ -35,7 +35,7 @@ export function AlbumCard({ activity, href }: { activity: Activity; href: string
         >
           <Image src={cover.src} alt={cover.caption} fill sizes="(max-width: 640px) 90vw, 30vw" className="object-cover transition-transform duration-[1.6s] group-hover:scale-110" />
           <div className="absolute inset-0 bg-gradient-to-t from-night-950/90 via-night-950/20 to-transparent" />
-          <span className="absolute left-4 top-4 rounded-full bg-gold-300 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-night-950">
+          <span className="absolute left-4 top-4 rounded-full bg-gold-300 px-3 py-1 text-sm font-semibold text-night-950">
             {activity.category}
           </span>
           <div className="absolute inset-x-0 bottom-0 p-5">

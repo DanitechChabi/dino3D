@@ -17,11 +17,11 @@ export default function ForgotPasswordPage() {
       <div className="space-y-3">
         <a href={tel(church.assistancePhone)} className="flex items-center gap-3 rounded-2xl border border-night-900/10 bg-white p-4 hover:border-gold-400">
           <Headset className="size-5 text-gold-600" />
-          <span><span className="block text-xs font-bold uppercase tracking-[0.2em] text-gold-600">Assistance</span><span className="font-semibold text-night-900">{church.assistancePhone}</span></span>
+          <span><span className="block text-sm font-semibold text-gold-600">Assistance</span><span className="font-semibold text-night-900">{church.assistancePhone}</span></span>
         </a>
         <a href={tel(church.phone)} className="flex items-center gap-3 rounded-2xl border border-night-900/10 bg-white p-4 hover:border-gold-400">
           <Phone className="size-5 text-gold-600" />
-          <span><span className="block text-xs font-bold uppercase tracking-[0.2em] text-gold-600">Église</span><span className="font-semibold text-night-900">{church.phone}</span></span>
+          <span><span className="block text-sm font-semibold text-gold-600">Église</span><span className="font-semibold text-night-900">{church.phone}</span></span>
         </a>
       </div>
       <Link href="/connexion" className="inline-block text-sm font-bold text-gold-600">← Retour à la connexion</Link>

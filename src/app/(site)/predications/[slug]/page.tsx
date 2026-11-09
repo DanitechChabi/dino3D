@@ -38,7 +38,7 @@ export default async function SermonPage(props: PageProps<"/predications/[slug]"
       </section>
       <section className="py-12">
         <div className="mx-auto max-w-3xl px-4">
-          {s.series && <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-600">Série · {s.series}</p>}
+          {s.series && <p className="text-sm font-semibold text-gold-600">Série · {s.series}</p>}
           <h1 className="mt-2 font-serif text-4xl font-semibold leading-tight text-night-900 sm:text-5xl">{s.title}</h1>
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-night-800/70">
             {s.preacher && <span className="flex items-center gap-1.5"><Mic className="size-4 text-gold-600" /> {s.preacher}</span>}

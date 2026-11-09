@@ -70,7 +70,7 @@ export function DonationStatusView({ reference, initial, message }: { reference:
           « Dieu aime celui qui donne avec joie. » <span className="not-italic text-gold-300">— 2 Corinthiens 9:7</span>
         </motion.p>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }} className="mt-8 flex flex-wrap justify-center gap-3">
-          <a href={`/recu/${reference}`} target="_blank" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-6 py-3 font-bold text-night-950">
+          <a href={`/recu/${reference}`} target="_blank" className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3 font-bold text-night-950">
             <Receipt className="size-4" /> Mon reçu
           </a>
           <Link href="/" className="inline-flex items-center rounded-full border border-white/20 px-6 py-3 font-bold text-white hover:bg-white/10">Retour à l&apos;accueil</Link>
@@ -83,7 +83,7 @@ export function DonationStatusView({ reference, initial, message }: { reference:
       <XCircle className="mx-auto size-16 text-red-400" />
       <h1 className="mt-6 font-serif text-4xl font-semibold text-white">{status === "CANCELLED" ? "Paiement annulé" : "Le paiement n'a pas abouti"}</h1>
       <p className="mt-3 text-white/70">Aucun montant n&apos;a été prélevé. Vous pouvez réessayer.</p>
-      <Link href="/donner" className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 px-6 py-3 font-bold text-night-950">
+      <Link href="/donner" className="mt-8 inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3 font-bold text-night-950">
         <RotateCcw className="size-4" /> Réessayer
       </Link>
     </div>

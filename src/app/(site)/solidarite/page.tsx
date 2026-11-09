@@ -86,7 +86,6 @@ export default async function SolidarityPage() {
       </section>
 
       <section className="relative overflow-hidden bg-night-950 py-20 text-white">
-        <div className="pointer-events-none absolute -left-20 top-0 size-96 rounded-full bg-gold-500/15 blur-3xl" />
         <div className="relative mx-auto flex max-w-4xl flex-col items-center px-4 text-center">
           <HeartHandshake className="size-12 text-gold-300" />
           <h2 className="mt-4 font-serif text-4xl font-semibold">Vous traversez une épreuve ?</h2>

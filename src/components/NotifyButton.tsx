@@ -116,7 +116,7 @@ export function NotifyButton({ dark = false }: { dark?: boolean }) {
           onClick={enable}
           disabled={busy}
           whileTap={{ scale: 0.97 }}
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 px-6 py-3 text-sm font-bold text-night-950 shadow-[0_10px_30px_-10px_rgba(212,164,60,.8)] disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3 text-sm font-bold text-night-950 disabled:opacity-60"
         >
           {busy ? <Loader2 className="size-4 animate-spin" /> : <motion.span animate={{ rotate: [0, -18, 14, -8, 0] }} transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 2.5 }}><Bell className="size-4" /></motion.span>}
           Activer les rappels sur ce téléphone

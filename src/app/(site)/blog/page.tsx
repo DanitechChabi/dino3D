@@ -40,10 +40,10 @@ export default async function BlogPage() {
                     className="object-cover transition-transform duration-[2s] group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent to-night-950/60" />
-                  <span className="absolute left-5 top-5 rounded-full bg-gold-300 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-night-950">À la une</span>
+                  <span className="absolute left-5 top-5 rounded-full bg-gold-300 px-3 py-1 text-sm font-semibold text-night-950">À la une</span>
                 </div>
                 <div className="flex flex-col justify-center p-7 sm:p-10">
-                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold-400">{featured.category}</p>
+                  <p className="text-sm font-semibold text-gold-400">{featured.category}</p>
                   <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight sm:text-4xl">{featured.title}</h2>
                   {featured.date && (
                     <p className="mt-3 flex items-center gap-2 text-sm text-white/60">
@@ -66,7 +66,7 @@ export default async function BlogPage() {
                   <TiltCard className="flex h-full flex-col overflow-hidden rounded-3xl border border-night-900/10 bg-white">
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image src={a.photos[a.cover].src} alt={a.photos[a.cover].caption} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-[1.6s] group-hover:scale-110" />
-                      <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-night-900">{a.category}</span>
+                      <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-night-900">{a.category}</span>
                     </div>
                     <div className="flex flex-1 flex-col p-6">
                       <h3 className="font-serif text-2xl font-semibold leading-tight text-night-900">{a.title}</h3>

@@ -16,7 +16,7 @@ export default async function AnnouncementsPage() {
           {items.length === 0 && <p className="text-center text-night-800/60">Aucune annonce pour le moment.</p>}
           {items.map((a) => (
             <Reveal key={a.id}>
-              <article className={`rounded-3xl border bg-white p-7 sm:p-9 ${a.pinned ? "border-gold-500/50 shadow-[0_20px_50px_-30px_rgba(179,134,42,.6)]" : "border-night-900/10"}`}>
+              <article className={`rounded-3xl border bg-white p-7 sm:p-9 ${a.pinned ? "border-gold-500/50" : "border-night-900/10"}`}>
                 <p className="flex items-center gap-2 text-xs font-semibold text-night-800/60">
                   {a.pinned && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-gold-300/40 px-2 py-0.5 text-gold-600">

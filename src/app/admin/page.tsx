@@ -45,7 +45,6 @@ export default async function AdminHome() {
         {stats.map(({ label, value, icon: Icon }, i) => (
           <Reveal key={label} delay={i * 0.06}>
             <div className="relative overflow-hidden rounded-3xl bg-night-950 p-6 text-white">
-              <div className="pointer-events-none absolute -right-8 -top-8 size-32 rounded-full bg-gold-400/20 blur-2xl" />
               <Icon className="size-5 text-gold-300" />
               <p className="mt-4 font-serif text-5xl font-semibold"><AnimatedNumber value={value} /></p>
               <p className="mt-1 text-sm text-white/65">{label}</p>
